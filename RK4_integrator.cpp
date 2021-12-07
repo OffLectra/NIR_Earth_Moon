@@ -7,24 +7,21 @@
 #include "functions.h"
 #include "atm_gost_.h"
 
-
 using namespace std;
 
 //Мат.модель без атмосферы
-double integr_RK4(NU_RK4 nu, Settings_RK4 settings)
-{
+double integr_RK4(NU_RK4 nu, Settings_RK4 settings) {
     bool print_to_file = settings.is_export_data_to_file;
     double matr_K[4][d_LAST] = {0.0};
-    ASK_param_vec vec_ASK = nu.vec_ASK, vec_ASK_temp = vec_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
+    ASK_param_vec vec_ASK = nu.v_ASK, vec_ASK_temp = vec_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
                                                                  //2) явл врем перем для хран век сост на подшагах инт ((y, y1, y2, y3)_i, (y, y1, y2, y3)_i+1, ...);
-    Kep_param_vec vec_KE = nu.vec_KE;
+    Kep_param_vec vec_KE = nu.v_KE;
     ofstream Vivod_File(settings.file_name.toStdString(), ios_base::trunc);
     Vivod_File << fixed;
     Vivod_File.precision(16);
 
     QString razd = ";";
-    if (print_to_file)
-    {
+    if (print_to_file) {
       Vivod_File << "t"    << razd.toStdString() << "x"  << razd.toStdString() << "y" << razd.toStdString() << "r" << razd.toStdString() <<
                     "Vx"   << razd.toStdString() << "Vy" << razd.toStdString() << "V" << razd.toStdString() << "TETA" << razd.toStdString() <<
                     "a" << razd.toStdString() << "e" << razd.toStdString() << "i" << razd.toStdString() << "RAAN" << razd.toStdString() <<
@@ -38,9 +35,7 @@ double integr_RK4(NU_RK4 nu, Settings_RK4 settings)
     double h_izm = f_h_izm(f_V(vec_ASK.Vx, vec_ASK.Vy), f_r(vec_ASK.x, vec_ASK.y));//
     double V = f_V(vec_ASK.Vx, vec_ASK.Vy);
     double r = f_r(vec_ASK.x, vec_ASK.y);
-    double alpha = (f_TETA(vec_ASK.Vx, vec_ASK.Vy)-f_gamma(nu.gamma_0, nu.d_gamma_dt, vec_ASK.Time))*toDeg;
-
-
+    double alpha = (f_TETA(vec_ASK.Vx, vec_ASK.Vy) - f_gamma(nu.gamma_0, nu.d_gamma_dt, vec_ASK.Time))*toDeg;
 
 //    t = 0.0;           //с
 //    m0 = 8250.0;       //кг
@@ -54,12 +49,11 @@ double integr_RK4(NU_RK4 nu, Settings_RK4 settings)
     bool EoR = false;
     bool EoS = true;
 
-    double h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y),Earth_R);
+    double h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y), Earth_R);
 
     while (!EoR) {    //1 итер - 1 шаг инт
 
-        if (print_to_file && EoS)
-        {
+        if (print_to_file && EoS) {
           Vivod_File <<
                         vec_ASK.Time  << razd.toStdString() <<
                         vec_ASK.x    << razd.toStdString() <<
@@ -83,7 +77,7 @@ double integr_RK4(NU_RK4 nu, Settings_RK4 settings)
                         endl;
         }
 // 1)------------------------
-        h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y),Earth_R);
+        h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y), Earth_R);
         matr_K[0][d_Vx_dt] = f_d_Vx_dt(f_gx(vec_ASK_temp.x, f_r(vec_ASK_temp.x, vec_ASK_temp.y)), nu.P, vec_ASK_temp.m, f_gamma(nu.gamma_0, nu.d_gamma_dt, vec_ASK_temp.Time) );
         matr_K[0][d_Vy_dt] = f_d_Vy_dt(f_gy(vec_ASK_temp.y, f_r(vec_ASK_temp.x, vec_ASK_temp.y)), nu.P, vec_ASK_temp.m, f_gamma(nu.gamma_0, nu.d_gamma_dt, vec_ASK_temp.Time));
         matr_K[0][d_x_dt ] = f_d_x_dt(vec_ASK_temp.Vx);
@@ -95,40 +89,40 @@ double integr_RK4(NU_RK4 nu, Settings_RK4 settings)
         vec_ASK_temp.x  = vec_ASK.x + settings.dt*matr_K[0][d_x_dt]*0.5;
         vec_ASK_temp.y  = vec_ASK.y + settings.dt*matr_K[0][d_y_dt]*0.5;
         vec_ASK_temp.m  = vec_ASK.m + settings.dt*matr_K[0][d_m_dt]*0.5;
-        vec_ASK_temp.Time = vec_ASK.Time + settings.dt*0.5;
+        vec_ASK_temp.Time = vec_ASK.Time + settings.dt * 0.5;
 
 // 2)------------------------
-        h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y),Earth_R);
+        h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y), Earth_R);
         matr_K[1][d_Vx_dt] = f_d_Vx_dt(f_gx(vec_ASK_temp.x, f_r(vec_ASK_temp.x, vec_ASK_temp.y)), nu.P, vec_ASK_temp.m, f_gamma(nu.gamma_0, nu.d_gamma_dt, vec_ASK_temp.Time) );
         matr_K[1][d_Vy_dt] = f_d_Vy_dt(f_gy(vec_ASK_temp.y, f_r(vec_ASK_temp.x, vec_ASK_temp.y)), nu.P, vec_ASK_temp.m, f_gamma(nu.gamma_0, nu.d_gamma_dt, vec_ASK_temp.Time));
         matr_K[1][d_x_dt ] = f_d_x_dt(vec_ASK_temp.Vx);
         matr_K[1][d_y_dt ] = f_d_y_dt(vec_ASK_temp.Vy);
         matr_K[1][d_m_dt ] = f_d_m_dt(nu.beta);
 
-        vec_ASK_temp.Vx = vec_ASK.Vx + settings.dt*matr_K[1][d_Vx_dt]*0.5;
-        vec_ASK_temp.Vy = vec_ASK.Vy + settings.dt*matr_K[1][d_Vy_dt]*0.5;
-        vec_ASK_temp.x  = vec_ASK.x + settings.dt* matr_K[1][d_x_dt]*0.5;
-        vec_ASK_temp.y  = vec_ASK.y + settings.dt* matr_K[1][d_y_dt]*0.5;
-        vec_ASK_temp.m  = vec_ASK.m + settings.dt* matr_K[1][d_m_dt]*0.5;
-        vec_ASK_temp.Time = vec_ASK.Time + settings.dt*0.5;
+        vec_ASK_temp.Vx = vec_ASK.Vx + settings.dt * matr_K[1][d_Vx_dt]*0.5;
+        vec_ASK_temp.Vy = vec_ASK.Vy + settings.dt * matr_K[1][d_Vy_dt]*0.5;
+        vec_ASK_temp.x  = vec_ASK.x + settings.dt * matr_K[1][d_x_dt]*0.5;
+        vec_ASK_temp.y  = vec_ASK.y + settings.dt * matr_K[1][d_y_dt]*0.5;
+        vec_ASK_temp.m  = vec_ASK.m + settings.dt * matr_K[1][d_m_dt]*0.5;
+        vec_ASK_temp.Time = vec_ASK.Time + settings.dt * 0.5;
 
 // 3)------------------------
-        h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y),Earth_R);
+        h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y), Earth_R);
         matr_K[2][d_Vx_dt] = f_d_Vx_dt(f_gx(vec_ASK_temp.x, f_r(vec_ASK_temp.x, vec_ASK_temp.y)), nu.P, vec_ASK_temp.m, f_gamma(nu.gamma_0, nu.d_gamma_dt, vec_ASK_temp.Time) );
         matr_K[2][d_Vy_dt] = f_d_Vy_dt(f_gy(vec_ASK_temp.y, f_r(vec_ASK_temp.x, vec_ASK_temp.y)), nu.P, vec_ASK_temp.m, f_gamma(nu.gamma_0, nu.d_gamma_dt, vec_ASK_temp.Time));
         matr_K[2][d_x_dt ] = f_d_x_dt(vec_ASK_temp.Vx);
         matr_K[2][d_y_dt ] = f_d_y_dt(vec_ASK_temp.Vy);
         matr_K[2][d_m_dt ] = f_d_m_dt(nu.beta);
 
-        vec_ASK_temp.Vx = vec_ASK.Vx + settings.dt*matr_K[2][d_Vx_dt];
-        vec_ASK_temp.Vy = vec_ASK.Vy + settings.dt*matr_K[2][d_Vy_dt];
-        vec_ASK_temp.x  = vec_ASK.x + settings.dt* matr_K[2][d_x_dt];
-        vec_ASK_temp.y  = vec_ASK.y + settings.dt* matr_K[2][d_y_dt];
-        vec_ASK_temp.m  = vec_ASK.m + settings.dt* matr_K[2][d_m_dt];
+        vec_ASK_temp.Vx = vec_ASK.Vx + settings.dt * matr_K[2][d_Vx_dt];
+        vec_ASK_temp.Vy = vec_ASK.Vy + settings.dt * matr_K[2][d_Vy_dt];
+        vec_ASK_temp.x  = vec_ASK.x + settings.dt * matr_K[2][d_x_dt];
+        vec_ASK_temp.y  = vec_ASK.y + settings.dt * matr_K[2][d_y_dt];
+        vec_ASK_temp.m  = vec_ASK.m + settings.dt * matr_K[2][d_m_dt];
         vec_ASK_temp.Time = vec_ASK.Time + settings.dt;
 
 // 4)------------------------
-        h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y),Earth_R);
+        h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y), Earth_R);
         matr_K[3][d_Vx_dt] = f_d_Vx_dt(f_gx(vec_ASK_temp.x, f_r(vec_ASK_temp.x, vec_ASK_temp.y)), nu.P, vec_ASK_temp.m, f_gamma(nu.gamma_0, nu.d_gamma_dt, vec_ASK_temp.Time) );
         matr_K[3][d_Vy_dt] = f_d_Vy_dt(f_gy(vec_ASK_temp.y, f_r(vec_ASK_temp.x, vec_ASK_temp.y)), nu.P, vec_ASK_temp.m, f_gamma(nu.gamma_0, nu.d_gamma_dt, vec_ASK_temp.Time));
         matr_K[3][d_x_dt ] = f_d_x_dt(vec_ASK_temp.Vx);
@@ -136,24 +130,17 @@ double integr_RK4(NU_RK4 nu, Settings_RK4 settings)
         matr_K[3][d_m_dt ] = f_d_m_dt(nu.beta);
 
 //---------------------------
-        vec_ASK_temp.Vx   = vec_ASK.Vx   + settings.dt*(1.0/6.0)*(matr_K[0][d_Vx_dt] + 2*matr_K[1][d_Vx_dt] + 2*matr_K[2][d_Vx_dt] + matr_K[3][d_Vx_dt]);
-        vec_ASK_temp.Vy   = vec_ASK.Vy   + settings.dt*(1.0/6.0)*(matr_K[0][d_Vy_dt] + 2*matr_K[1][d_Vy_dt] + 2*matr_K[2][d_Vy_dt] + matr_K[3][d_Vy_dt]);
-        vec_ASK_temp.x    = vec_ASK.x    + settings.dt*(1.0/6.0)*(matr_K[0][d_x_dt ] + 2*matr_K[1][d_x_dt ] + 2*matr_K[2][d_x_dt ] + matr_K[3][d_x_dt ]);
-        vec_ASK_temp.y    = vec_ASK.y    + settings.dt*(1.0/6.0)*(matr_K[0][d_y_dt ] + 2*matr_K[1][d_y_dt ] + 2*matr_K[2][d_y_dt ] + matr_K[3][d_y_dt ]);
-        vec_ASK_temp.m    = vec_ASK.m    + settings.dt*(1.0/6.0)*(matr_K[0][d_m_dt ] + 2*matr_K[1][d_m_dt ] + 2*matr_K[2][d_m_dt ] + matr_K[3][d_m_dt ]);
+        vec_ASK_temp.Vx   = vec_ASK.Vx   + settings.dt * (1.0/6.0)*(matr_K[0][d_Vx_dt] + 2*matr_K[1][d_Vx_dt] + 2*matr_K[2][d_Vx_dt] + matr_K[3][d_Vx_dt]);
+        vec_ASK_temp.Vy   = vec_ASK.Vy   + settings.dt * (1.0/6.0)*(matr_K[0][d_Vy_dt] + 2*matr_K[1][d_Vy_dt] + 2*matr_K[2][d_Vy_dt] + matr_K[3][d_Vy_dt]);
+        vec_ASK_temp.x    = vec_ASK.x    + settings.dt * (1.0/6.0)*(matr_K[0][d_x_dt ] + 2*matr_K[1][d_x_dt ] + 2*matr_K[2][d_x_dt ] + matr_K[3][d_x_dt ]);
+        vec_ASK_temp.y    = vec_ASK.y    + settings.dt * (1.0/6.0)*(matr_K[0][d_y_dt ] + 2*matr_K[1][d_y_dt ] + 2*matr_K[2][d_y_dt ] + matr_K[3][d_y_dt ]);
+        vec_ASK_temp.m    = vec_ASK.m    + settings.dt * (1.0/6.0)*(matr_K[0][d_m_dt ] + 2*matr_K[1][d_m_dt ] + 2*matr_K[2][d_m_dt ] + matr_K[3][d_m_dt ]);
         vec_ASK_temp.Time = vec_ASK.Time + settings.dt;
-
-
-
 
         h_izm = f_h_izm(f_V(vec_ASK_temp.Vx, vec_ASK_temp.Vy), f_r(vec_ASK_temp.x, vec_ASK_temp.y));
 
-
-
-        if (h_izm>=settings.hf )
-        {
-            if (fabs(h_izm-settings.hf)>settings.eps)
-            {
+        if (h_izm>=settings.hf ) {
+            if (fabs(h_izm-settings.hf)>settings.eps) {
                 EoS = false;
                 settings.dt /= 10;
             } else {
@@ -165,12 +152,10 @@ double integr_RK4(NU_RK4 nu, Settings_RK4 settings)
         }
 
 
-        if (shag>=1E5)
-        {
+        if (shag>=1E5) {
             EoR = true;
         }
-        if (EoS)
-        {
+        if (EoS) {
             vec_ASK = vec_ASK_temp;
             vec_KE = AGESK_to_KE(vec_ASK);
             V = f_V(vec_ASK.Vx, vec_ASK.Vy);
@@ -183,8 +168,7 @@ double integr_RK4(NU_RK4 nu, Settings_RK4 settings)
         }
     }
 
-    if (print_to_file)
-    {
+    if (print_to_file) {
       Vivod_File << "t"    << razd.toStdString() << "x"  << razd.toStdString() << "y" << razd.toStdString() << "r" << razd.toStdString() <<
                     "Vx"   << razd.toStdString() << "Vy" << razd.toStdString() << "V" << razd.toStdString() << "TETA" << razd.toStdString() <<
                     "a" << razd.toStdString() << "e" << razd.toStdString() << "i" << razd.toStdString() << "RAAN" << razd.toStdString() <<
@@ -197,20 +181,18 @@ double integr_RK4(NU_RK4 nu, Settings_RK4 settings)
     return vec_ASK_temp.Time;
 }
 
-double integr_RK4_upr(NU_RK4 nu, Settings_RK4 settings, Vector upr)
-{
+double integr_RK4_upr(NU_RK4 nu, Settings_RK4 settings, Vector upr) {
     bool print_to_file = settings.is_export_data_to_file;
     double matr_K[4][d_LAST] = {0.0};
-    ASK_param_vec vec_ASK = nu.vec_ASK, vec_ASK_temp = vec_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
+    ASK_param_vec vec_ASK = nu.v_ASK, vec_ASK_temp = vec_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
                                                                  //2) явл врем перем для хран век сост на подшагах инт ((y, y1, y2, y3)_i, (y, y1, y2, y3)_i+1, ...);
-    Kep_param_vec vec_KE = nu.vec_KE;
+    Kep_param_vec vec_KE = nu.v_KE;
     ofstream Vivod_File(settings.file_name.toStdString(), ios_base::trunc);
     Vivod_File << fixed;
     Vivod_File.precision(16);
 
     QString razd = ";";
-    if (print_to_file)
-    {
+    if (print_to_file) {
       Vivod_File << "t"    << razd.toStdString() << "x"  << razd.toStdString() << "y" << razd.toStdString() << "r" << razd.toStdString() <<
                     "Vx"   << razd.toStdString() << "Vy" << razd.toStdString() << "V" << razd.toStdString() << "TETA" << razd.toStdString() <<
                     "a" << razd.toStdString() << "e" << razd.toStdString() << "i" << razd.toStdString() << "RAAN" << razd.toStdString() <<
@@ -225,7 +207,6 @@ double integr_RK4_upr(NU_RK4 nu, Settings_RK4 settings, Vector upr)
     double V = f_V(vec_ASK.Vx, vec_ASK.Vy);
     double r = f_r(vec_ASK.x, vec_ASK.y);
     double alpha = (f_TETA(vec_ASK.Vx, vec_ASK.Vy)-f_gamma(upr[u_gamma], upr[u_dgdt], vec_ASK.Time))*toDeg;
-
 
 
 //    t = 0.0;           //с
@@ -244,8 +225,7 @@ double integr_RK4_upr(NU_RK4 nu, Settings_RK4 settings, Vector upr)
 
     while (!EoR) {    //1 итер - 1 шаг инт
 
-        if (print_to_file && EoS)
-        {
+        if (print_to_file && EoS) {
           Vivod_File <<
                         vec_ASK.Time  << razd.toStdString() <<
                         vec_ASK.x    << razd.toStdString() <<
@@ -330,14 +310,9 @@ double integr_RK4_upr(NU_RK4 nu, Settings_RK4 settings, Vector upr)
         vec_ASK_temp.Time = vec_ASK.Time + settings.dt;
 
 
-
-
         h_izm = f_h_izm(f_V(vec_ASK_temp.Vx, vec_ASK_temp.Vy), f_r(vec_ASK_temp.x, vec_ASK_temp.y));
 
-
-
-        if (h_izm>=settings.hf )
-        {
+        if (h_izm>=settings.hf ) {
             if (fabs(h_izm-settings.hf)>settings.eps)
             {
                 EoS = false;
@@ -351,12 +326,10 @@ double integr_RK4_upr(NU_RK4 nu, Settings_RK4 settings, Vector upr)
         }
 
 
-        if (shag>=1E5)
-        {
+        if (shag>=1E5) {
             EoR = true;
         }
-        if (EoS)
-        {
+        if (EoS) {
             vec_ASK = vec_ASK_temp;
             vec_KE = AGESK_to_KE(vec_ASK);
             V = f_V(vec_ASK.Vx, vec_ASK.Vy);
@@ -369,8 +342,7 @@ double integr_RK4_upr(NU_RK4 nu, Settings_RK4 settings, Vector upr)
         }
     }
 
-    if (print_to_file)
-    {
+    if (print_to_file) {
       Vivod_File << "t"    << razd.toStdString() << "x"  << razd.toStdString() << "y" << razd.toStdString() << "r" << razd.toStdString() <<
                     "Vx"   << razd.toStdString() << "Vy" << razd.toStdString() << "V" << razd.toStdString() << "TETA" << razd.toStdString() <<
                     "a" << razd.toStdString() << "e" << razd.toStdString() << "i" << razd.toStdString() << "RAAN" << razd.toStdString() <<
@@ -384,20 +356,18 @@ double integr_RK4_upr(NU_RK4 nu, Settings_RK4 settings, Vector upr)
 }
 
 //Мат.модель с учетом атмосферы
-void integr_RK4_atm(NU_RK4 nu, Settings_RK4 settings)
-{
+void integr_RK4_atm(NU_RK4 nu, Settings_RK4 settings) {
     bool print_to_file = settings.is_export_data_to_file;
     double matr_K[4][d_LAST] = {0.0};
-    ASK_param_vec vec_ASK = nu.vec_ASK, vec_ASK_temp = vec_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
+    ASK_param_vec vec_ASK = nu.v_ASK, vec_ASK_temp = vec_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
                                                                  //2) явл врем перем для хран век сост на подшагах инт ((y, y1, y2, y3)_i, (y, y1, y2, y3)_i+1, ...);
-    Kep_param_vec vec_KE = nu.vec_KE;
+    Kep_param_vec vec_KE = nu.v_KE;
     ofstream Vivod_File(settings.file_name.toStdString(), ios_base::trunc);
     Vivod_File << fixed;
     Vivod_File.precision(16);
 
     QString razd = ";";
-    if (print_to_file)
-    {
+    if (print_to_file) {
       Vivod_File << "t"    << razd.toStdString() << "x"  << razd.toStdString() << "y" << razd.toStdString() << "r" << razd.toStdString() <<
                     "Vx"   << razd.toStdString() << "Vy" << razd.toStdString() << "V" << razd.toStdString() << "TETA" << razd.toStdString() <<
                     "a" << razd.toStdString() << "e" << razd.toStdString() << "i" << razd.toStdString() << "RAAN" << razd.toStdString() <<
@@ -429,8 +399,8 @@ void integr_RK4_atm(NU_RK4 nu, Settings_RK4 settings)
 
 
     double X0[3] = { 0.0 };
-    X0[0] = nu.vec_ASK.x;
-    X0[1] = nu.vec_ASK.y;
+    X0[0] = nu.v_ASK.x;
+    X0[1] = nu.v_ASK.y;
 
     double F0 = 250.0;
 
@@ -621,9 +591,6 @@ void integr_RK4_atm(NU_RK4 nu, Settings_RK4 settings)
     Vivod_File.close();
 }
 
-
-
-
 //        for (int i = 0; i < 4; i++ ) //итератор
 //        {
 //            switch (i) {
@@ -664,7 +631,7 @@ Vector grad_RK4_upr(Vector upr, Vector dupr, NU_RK4 nu, Settings_RK4 settings){
     for (int i = 0; i < n; ++i) {
         upr_t = upr;
         upr_t[i] += dupr[i];
-        grad[i] = (integr_RK4_upr(nu,settings,upr_t)-f_neizm)/dupr[i];
+        grad[i] = (integr_RK4_upr(nu,settings,upr_t) - f_neizm)/dupr[i];
     }
     return grad;
 }

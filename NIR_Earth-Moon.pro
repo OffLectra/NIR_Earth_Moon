@@ -23,6 +23,8 @@ SOURCES += \
     help_function.cpp \
     main.cpp \
     mainwindow.cpp \
+    math_model_3d.cpp \
+    modeling_flight_rk4.cpp \
     perevod_.cpp
 
 HEADERS += \
@@ -33,6 +35,8 @@ HEADERS += \
     help_function.h \
     koef.h \
     mainwindow.h \
+    math_model_3d.h \
+    modeling_flight_rk4.h \
     perevod_.h
 
 FORMS += \

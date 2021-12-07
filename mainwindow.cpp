@@ -94,25 +94,21 @@ void MainWindow::on_pushButton_AGESK_to_KE_clicked()
 
 void MainWindow::on_B_start_clicked()
 {
-
-
     NU_RK4 nu;
-    nu.vec_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
-    nu.vec_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
-    nu.vec_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
-    nu.vec_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
-    nu.vec_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
-    nu.vec_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
-    nu.vec_ASK.m = ui->lineEdit_m->text().toDouble();
+    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
     nu.P = ui->lineEdit_P->text().toDouble();
     nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
     nu.beta = fabs(nu.P/(nu.P_ud*g0));
     nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
     nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
 
-    nu.vec_KE = AGESK_to_KE(nu.vec_ASK);
-
-
+    nu.v_KE = AGESK_to_KE(nu.v_ASK);
 
     Settings_RK4 settings;
     settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
@@ -122,28 +118,26 @@ void MainWindow::on_B_start_clicked()
 
     integr_RK4(nu, settings);
 
-
-
     QMessageBox::information(this, "Сообщение", "Расчет окончен");
 }
 
 void MainWindow::on_B_Startatm_clicked()
 {
     NU_RK4 nu;
-    nu.vec_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
-    nu.vec_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
-    nu.vec_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
-    nu.vec_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
-    nu.vec_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
-    nu.vec_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
-    nu.vec_ASK.m = ui->lineEdit_m->text().toDouble();
+    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
     nu.P = ui->lineEdit_P->text().toDouble();
     nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
     nu.beta = fabs(nu.P/(nu.P_ud*g0));
     nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
     nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
 
-    nu.vec_KE = AGESK_to_KE(nu.vec_ASK);
+    nu.v_KE = AGESK_to_KE(nu.v_ASK);
 
     nu.Sbalxbezm = ui->lineEdit_Cx->text().toDouble()* ui->lineEdit_Sm->text().toDouble() / 2;
 
@@ -164,20 +158,20 @@ void MainWindow::on_B_Startatm_clicked()
 void MainWindow::on_B_Optima_clicked()
 {
     NU_RK4 nu_cur,nu_temp;
-    nu_cur.vec_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
-    nu_cur.vec_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
-    nu_cur.vec_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
-    nu_cur.vec_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
-    nu_cur.vec_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
-    nu_cur.vec_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
-    nu_cur.vec_ASK.m = ui->lineEdit_m->text().toDouble();
+    nu_cur.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+    nu_cur.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+    nu_cur.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+    nu_cur.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+    nu_cur.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+    nu_cur.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+    nu_cur.v_ASK.m = ui->lineEdit_m->text().toDouble();
     nu_cur.P = ui->lineEdit_P->text().toDouble();
     nu_cur.P_ud = ui->lineEdit_P_ud->text().toDouble();
     nu_cur.beta = fabs(nu_cur.P/(nu_cur.P_ud*g0));
     nu_cur.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
     nu_cur.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
 
-    nu_cur.vec_KE = AGESK_to_KE(nu_cur.vec_ASK);
+    nu_cur.v_KE = AGESK_to_KE(nu_cur.v_ASK);
 
     nu_cur.Sbalxbezm = ui->lineEdit_Cx->text().toDouble()* ui->lineEdit_Sm->text().toDouble() / 2;
 
@@ -316,20 +310,20 @@ void MainWindow::on_B_Optima_clicked()
 void MainWindow::on_B_Opt_DFP_clicked()
 {
     NU_RK4 nu_cur;
-    nu_cur.vec_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
-    nu_cur.vec_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
-    nu_cur.vec_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
-    nu_cur.vec_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
-    nu_cur.vec_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
-    nu_cur.vec_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
-    nu_cur.vec_ASK.m = ui->lineEdit_m->text().toDouble();
+    nu_cur.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+    nu_cur.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+    nu_cur.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+    nu_cur.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+    nu_cur.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+    nu_cur.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+    nu_cur.v_ASK.m = ui->lineEdit_m->text().toDouble();
     nu_cur.P = ui->lineEdit_P->text().toDouble();
     nu_cur.P_ud = ui->lineEdit_P_ud->text().toDouble();
     nu_cur.beta = fabs(nu_cur.P/(nu_cur.P_ud*g0));
     nu_cur.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
     nu_cur.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
 
-    nu_cur.vec_KE = AGESK_to_KE(nu_cur.vec_ASK);
+    nu_cur.v_KE = AGESK_to_KE(nu_cur.v_ASK);
 
     nu_cur.Sbalxbezm = ui->lineEdit_Cx->text().toDouble()* ui->lineEdit_Sm->text().toDouble() / 2;
 
@@ -436,7 +430,7 @@ void MainWindow::on_B_Opt_DFP_clicked()
 
             dw = min_VxV(grad_x_k_1,grad_x_k); // 7. Вычисляем
             out += QString("dw[u_gamma]k") + "\t" + "dw[u_dgdt]k" + "\n";
-            out += QString::number(dw[u_gamma],'f',10) + "\t" + QString::number(dw[u_dgdt],'f',10) + "\n";
+            out += QString::number(dw[u_gamma],'f',10.0) + "\t" + QString::number(dw[u_dgdt],'f',10) + "\n";
 
             dx = min_VxV(x_k,x_k_1);            // 8. Вычисляем
 
@@ -447,9 +441,9 @@ void MainWindow::on_B_Opt_DFP_clicked()
             dxt = add_VxV(dx,mp_MxV(A,dw));     // 9. Вычисляем  Здесь А еще не изменилась!!!
 
             out += QString("dxt[u_gamma]") + "\t" + "dxt[u_dgdt]" + "\n";
-            out += QString::number(dxt[u_gamma],'f',10) + "\t" + QString::number(dxt[u_dgdt],'f',10) + "\n";
+            out += QString::number(dxt[u_gamma],'f',10.0) + "\t" + QString::number(dxt[u_dgdt],'f',10) + "\n";
 
-            dA = mp_cxM(1/smp_VxV(dw,dxt),mp_VxVT(dxt)); // 10. Вычисляем
+            dA = mp_cxM(1.0/smp_VxV(dw,dxt),mp_VxVT(dxt)); // 10. Вычисляем
 
             out += QString("dA") + "\n";
             out += QString::number(dA[0][0],'f',10) + "\t" + QString::number(dA[0][1],'f',10) + "\n";
@@ -490,20 +484,20 @@ void MainWindow::on_B_Opt_DFP_clicked()
 void MainWindow::on_B_Optima_new_clicked()
 {
     NU_RK4 nu_cur;
-    nu_cur.vec_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
-    nu_cur.vec_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
-    nu_cur.vec_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
-    nu_cur.vec_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
-    nu_cur.vec_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
-    nu_cur.vec_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
-    nu_cur.vec_ASK.m = ui->lineEdit_m->text().toDouble();
+    nu_cur.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+    nu_cur.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+    nu_cur.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+    nu_cur.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+    nu_cur.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+    nu_cur.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+    nu_cur.v_ASK.m = ui->lineEdit_m->text().toDouble();
     nu_cur.P = ui->lineEdit_P->text().toDouble();
     nu_cur.P_ud = ui->lineEdit_P_ud->text().toDouble();
     nu_cur.beta = fabs(nu_cur.P/(nu_cur.P_ud*g0));
     nu_cur.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
     nu_cur.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
 
-    nu_cur.vec_KE = AGESK_to_KE(nu_cur.vec_ASK);
+    nu_cur.v_KE = AGESK_to_KE(nu_cur.v_ASK);
 
     nu_cur.Sbalxbezm = ui->lineEdit_Cx->text().toDouble()* ui->lineEdit_Sm->text().toDouble() / 2;
 

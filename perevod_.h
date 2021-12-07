@@ -63,6 +63,15 @@ typedef struct {
     QString name[7] = {"x","y","z","Vx","Vy","Vz","m"};
     int kol_params  = 7;
     //QDateTime DateTime;
+
+    double r(){
+        return f_r(x, y, z);
+    }
+
+    double V(){
+        return f_V(Vx, Vy, Vz);
+    }
+
 } ASK_param_vec; //название типа структуры
 
 Kep_param_vec AGESK_to_KE(ASK_param_vec v_AGESK); //функция перевода из агэск в кэ
