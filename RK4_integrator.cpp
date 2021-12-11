@@ -1,8 +1,3 @@
-#include "math.h"
-#include "iostream"
-#include <iomanip>
-#include <cmath>
-#include "fstream"
 #include "RK4_integrator.h"
 #include "functions.h"
 #include "atm_gost_.h"
@@ -13,7 +8,7 @@ using namespace std;
 double integr_RK4(NU_RK4 nu, Settings_RK4 settings) {
     bool print_to_file = settings.is_export_data_to_file;
     double matr_K[4][d_LAST] = {0.0};
-    ASK_param_vec vec_ASK = nu.v_ASK, vec_ASK_temp = vec_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
+    ASK_param_vec vec_ASK = nu.v_ASK, vec_ASK_temp = vec_ASK;    //1) явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
                                                                  //2) явл врем перем для хран век сост на подшагах инт ((y, y1, y2, y3)_i, (y, y1, y2, y3)_i+1, ...);
     Kep_param_vec vec_KE = nu.v_KE;
     ofstream Vivod_File(settings.file_name.toStdString(), ios_base::trunc);
@@ -22,11 +17,11 @@ double integr_RK4(NU_RK4 nu, Settings_RK4 settings) {
 
     QString razd = ";";
     if (print_to_file) {
-      Vivod_File << "t"    << razd.toStdString() << "x"  << razd.toStdString() << "y" << razd.toStdString() << "r" << razd.toStdString() <<
-                    "Vx"   << razd.toStdString() << "Vy" << razd.toStdString() << "V" << razd.toStdString() << "TETA" << razd.toStdString() <<
-                    "a" << razd.toStdString() << "e" << razd.toStdString() << "i" << razd.toStdString() << "RAAN" << razd.toStdString() <<
-                    "omega" <<razd.toStdString() << "u" << razd.toStdString() << "h" << razd.toStdString() <<
-                    "m" << razd.toStdString() << "beta" << razd.toStdString() << "gamma"<< razd.toStdString() << "alpha" << razd.toStdString() << "ro" << razd.toStdString() <<
+      Vivod_File << "t"     << razd.toStdString() << "x"    << razd.toStdString() << "y"    << razd.toStdString() << "r"     << razd.toStdString() <<
+                    "Vx"    << razd.toStdString() << "Vy"   << razd.toStdString() << "V"    << razd.toStdString() << "TETA"  << razd.toStdString() <<
+                    "a"     << razd.toStdString() << "e"    << razd.toStdString() << "i"    << razd.toStdString() << "RAAN"  << razd.toStdString() <<
+                    "omega" << razd.toStdString() << "u"    << razd.toStdString() << "h"    << razd.toStdString() <<
+                    "m"     << razd.toStdString() << "beta" << razd.toStdString() << "gamma"<< razd.toStdString() << "alpha" << razd.toStdString() << "ro" << razd.toStdString() <<
                     "hight" << razd.toStdString() << endl;
     }
     int shag = 0;
@@ -55,25 +50,27 @@ double integr_RK4(NU_RK4 nu, Settings_RK4 settings) {
 
         if (print_to_file && EoS) {
           Vivod_File <<
-                        vec_ASK.Time  << razd.toStdString() <<
-                        vec_ASK.x    << razd.toStdString() <<
-                        vec_ASK.y<< razd.toStdString() <<
-                        r << razd.toStdString() <<
-                        vec_ASK.Vx<< razd.toStdString() <<
-                        vec_ASK.Vy<< razd.toStdString() <<
-                        V << razd.toStdString() <<
+                        vec_ASK.Time   << razd.toStdString() <<
+                        vec_ASK.x      << razd.toStdString() <<
+                        vec_ASK.y      << razd.toStdString() <<
+                        r              << razd.toStdString() <<
+                        vec_ASK.Vx     << razd.toStdString() <<
+                        vec_ASK.Vy     << razd.toStdString() <<
+                        V              << razd.toStdString() <<
                         f_TETA(vec_ASK.Vx, vec_ASK.Vy)*toDeg << razd.toStdString() <<
-                        vec_KE.a << razd.toStdString() <<
-                        vec_KE.e << razd.toStdString() <<
+                        vec_KE.a       << razd.toStdString() <<
+                        vec_KE.e       << razd.toStdString() <<
                         vec_KE.i*toDeg << razd.toStdString() <<
                         vec_KE.RAAN*toDeg << razd.toStdString() <<
                         vec_KE.om*toDeg << razd.toStdString() <<
-                        vec_KE.u*toDeg << razd.toStdString() <<
-                        h_izm << razd.toStdString() <<
-                        vec_ASK.m<< razd.toStdString() <<
-                        nu.beta << razd.toStdString() <<
+                        vec_KE.u*toDeg  << razd.toStdString() <<
+                        h_izm           << razd.toStdString() <<
+                        vec_ASK.m       << razd.toStdString() <<
+                        nu.beta         << razd.toStdString() <<
                         f_gamma(nu.gamma_0, nu.d_gamma_dt, vec_ASK.Time)*toDeg << razd.toStdString() <<
-                        alpha << razd.toStdString() << 0 << razd.toStdString() << h_tec << razd.toStdString() <<
+                        alpha           << razd.toStdString() <<
+                        0               << razd.toStdString() <<
+                        h_tec           << razd.toStdString() <<
                         endl;
         }
 // 1)------------------------
@@ -422,8 +419,7 @@ void integr_RK4_atm(NU_RK4 nu, Settings_RK4 settings) {
     h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y),Earth_R);
     while (!EoR) {    //1 итер - 1 шаг инт
 
-        if (print_to_file && EoS)
-        {
+        if (print_to_file && EoS) {
           Vivod_File <<
                         vec_ASK.Time  << razd.toStdString() <<
                         vec_ASK.x    << razd.toStdString() <<
@@ -470,7 +466,7 @@ void integr_RK4_atm(NU_RK4 nu, Settings_RK4 settings) {
         vec_ASK_temp.Time = vec_ASK.Time + settings.dt*0.5;
 
 // 2)------------------------
-        h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y),Earth_R);
+        h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y), Earth_R);
 
         X0[0] = vec_ASK_temp.x;
         X0[1] = vec_ASK_temp.y;
@@ -491,7 +487,7 @@ void integr_RK4_atm(NU_RK4 nu, Settings_RK4 settings) {
         vec_ASK_temp.Time = vec_ASK.Time + settings.dt*0.5;
 
 // 3)------------------------
-        h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y),Earth_R);
+        h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y), Earth_R);
 
         X0[0] = vec_ASK_temp.x;
         X0[1] = vec_ASK_temp.y;
@@ -512,7 +508,7 @@ void integr_RK4_atm(NU_RK4 nu, Settings_RK4 settings) {
         vec_ASK_temp.Time = vec_ASK.Time + settings.dt;
 
 // 4)------------------------
-        h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y),Earth_R);
+        h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y), Earth_R);
 
         X0[0] = vec_ASK_temp.x;
         X0[1] = vec_ASK_temp.y;
@@ -535,15 +531,12 @@ void integr_RK4_atm(NU_RK4 nu, Settings_RK4 settings) {
 
 
 
-
         h_izm = f_h_izm(f_V(vec_ASK_temp.Vx, vec_ASK_temp.Vy), f_r(vec_ASK_temp.x, vec_ASK_temp.y));
 
 
 
-        if (h_izm>=settings.hf )
-        {
-            if (fabs(h_izm-settings.hf)>settings.eps)
-            {
+        if (h_izm>=settings.hf ) {
+            if (fabs(h_izm-settings.hf)>settings.eps) {
                 EoS = false;
                 settings.dt /= 10;
             } else {
@@ -556,17 +549,15 @@ void integr_RK4_atm(NU_RK4 nu, Settings_RK4 settings) {
 
         h_tec = f_hight(f_r(vec_ASK_temp.x, vec_ASK_temp.y),Earth_R);
 
-        if (h_tec<=120.0 )
-        {
+        if (h_tec<=120.0 ) {
             EoR = true;
         }
 
-        if (shag>=1E5)
-        {
+        if (shag>=1E5) {
             EoR = true;
         }
-        if (EoS)
-        {
+
+        if (EoS) {
             vec_ASK = vec_ASK_temp;
             vec_KE = AGESK_to_KE(vec_ASK);
             V = f_V(vec_ASK.Vx, vec_ASK.Vy);
@@ -579,8 +570,7 @@ void integr_RK4_atm(NU_RK4 nu, Settings_RK4 settings) {
         }
     }
 
-    if (print_to_file)
-    {
+    if (print_to_file) {
       Vivod_File << "t"    << razd.toStdString() << "x"  << razd.toStdString() << "y" << razd.toStdString() << "r" << razd.toStdString() <<
                     "Vx"   << razd.toStdString() << "Vy" << razd.toStdString() << "V" << razd.toStdString() << "TETA" << razd.toStdString() <<
                     "a" << razd.toStdString() << "e" << razd.toStdString() << "i" << razd.toStdString() << "RAAN" << razd.toStdString() <<
@@ -620,7 +610,7 @@ void integr_RK4_atm(NU_RK4 nu, Settings_RK4 settings) {
 
 
 
-Vector grad_RK4_upr(Vector upr, Vector dupr, NU_RK4 nu, Settings_RK4 settings){
+Vector grad_RK4_upr(Vector upr, Vector dupr, NU_RK4 nu, Settings_RK4 settings) {
     int n = upr.length();
 
     Vector grad = Vector(n).fill(0.0);

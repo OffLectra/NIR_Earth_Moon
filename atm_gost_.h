@@ -1,11 +1,11 @@
 #ifndef ATM_GOST__H
 #define ATM_GOST__H
 
-#include "math.h"
-#include "iostream"
+#include <math.h>
+#include <iostream>
 #include <iomanip>
 #include <cmath>
-#include "fstream"
+#include <fstream>
 
 
 //double test_glob_rho_night;

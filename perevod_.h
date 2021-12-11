@@ -1,12 +1,13 @@
 #ifndef PEREVOD__H
 #define PEREVOD__H
-#include "QObject"
-#include "help_function.h"
-#include "QDateTime"
-#include "math.h"
+
+#include <QObject>
+#include <QDateTime>
+#include <math.h>
 #include <string>
 #include <iostream>
-#include "string.h"
+#include <string.h>
+#include "help_function.h"
 
 typedef struct {
     QString NameToC = "Kep"; //Type of coordinate name
@@ -40,35 +41,35 @@ typedef struct {
     int kol_params  = 6;
   //  QDateTime DateTime;   //переменная времени
     int rad_or_deg = 1;
-    void to_Deg(){
-        this->u_d     =  (this->u)   *toDeg;
-        this->f_d     =  (this->f)   *toDeg;
-        this->i_d     =  (this->i)   *toDeg;
-        this->om_d    =  (this->om)  *toDeg;
-        this->RAAN_d  =  (this->RAAN)*toDeg;
+    void to_Deg() {
+        this->u_d    = (this->u)   *toDeg;
+        this->f_d    = (this->f)   *toDeg;
+        this->i_d    = (this->i)   *toDeg;
+        this->om_d   = (this->om)  *toDeg;
+        this->RAAN_d = (this->RAAN)*toDeg;
     }
-    void to_Rad(){
-        this->u     =  (this->u_d)   *toRad;
-        this->f     =  (this->f_d)   *toRad;
-        this->i     =  (this->i_d)   *toRad;
-        this->om    =  (this->om_d)  *toRad;
-        this->RAAN  =  (this->RAAN_d)*toRad;
+    void to_Rad() {
+        this->u    = (this->u_d)   *toRad;
+        this->f    = (this->f_d)   *toRad;
+        this->i    = (this->i_d)   *toRad;
+        this->om   = (this->om_d)  *toRad;
+        this->RAAN = (this->RAAN_d)*toRad;
     }
 } Kep_param_vec;
 
-//декларация, далее объявляется тип
+// декларация, далее объявляется тип
 typedef struct {
     QString NameToC = "ASK"; //Type of coordinate name
-    double x = 0,y = 0,z = 0,Vx = 0,Vy = 0,Vz = 0, Time = 0, m = 0;
+    double x = 0, y = 0, z = 0, Vx = 0, Vy = 0, Vz = 0, Time = 0, m = 0;
     QString name[7] = {"x","y","z","Vx","Vy","Vz","m"};
     int kol_params  = 7;
     //QDateTime DateTime;
 
-    double r(){
+    double r() {
         return f_r(x, y, z);
     }
 
-    double V(){
+    double V() {
         return f_V(Vx, Vy, Vz);
     }
 
@@ -77,11 +78,11 @@ typedef struct {
 Kep_param_vec AGESK_to_KE(ASK_param_vec v_AGESK); //функция перевода из агэск в кэ
 ASK_param_vec KE_to_AGESK(Kep_param_vec v_KE);  //функция перевода из ке в агэск
 
-double  check_f_rad      (double f);
-double  check_u_rad      (double u);
-double  check_inc_rad    (double inc);
-double  check_omega_rad  (double omega);
-double  check_RAAN_rad   (double RAAN);
+double  check_f_rad     (double f);
+double  check_u_rad     (double u);
+double  check_inc_rad   (double inc);
+double  check_omega_rad (double omega);
+double  check_RAAN_rad  (double RAAN);
 
 
 #endif // PEREVOD__H

@@ -1,10 +1,10 @@
+#include <ui_mainwindow.h>
+#include <QMessageBox>
+#include <QDebug>
+#include <QVector>
+#include <QApplication>
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "QMessageBox"
-#include "QDebug"
-#include "QVector"
 
-#include "QApplication"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -19,8 +19,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_pushButton_KE_to_AGESK_clicked()
-{
+void MainWindow::on_pushButton_KE_to_AGESK_clicked() {
     Kep_param_vec v_KE;
 
     v_KE.a = ui->lineEdit_KE_a->text().toDouble()  ;
@@ -42,8 +41,7 @@ void MainWindow::on_pushButton_KE_to_AGESK_clicked()
 
 }
 
-void MainWindow::on_pushButton_AGESK_to_KE_clicked()
-{
+void MainWindow::on_pushButton_AGESK_to_KE_clicked() {
     ASK_param_vec v_AGESK;
 
     v_AGESK.x = ui->lineEdit_ASK_x0->  text().toDouble();
@@ -92,8 +90,7 @@ void MainWindow::on_pushButton_AGESK_to_KE_clicked()
 //----------------------------------------------
 
 
-void MainWindow::on_B_start_clicked()
-{
+void MainWindow::on_B_start_clicked() {
     NU_RK4 nu;
     nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
     nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
@@ -121,8 +118,38 @@ void MainWindow::on_B_start_clicked()
     QMessageBox::information(this, "Сообщение", "Расчет окончен");
 }
 
-void MainWindow::on_B_Startatm_clicked()
-{
+void MainWindow::on_B_start_Class_propagate_clicked() {
+    NU_RK4 nu;
+    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
+    nu.P = ui->lineEdit_P->text().toDouble();
+    nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
+    nu.beta = fabs(nu.P/(nu.P_ud*g0));
+    nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
+    nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
+
+    nu.v_KE = AGESK_to_KE(nu.v_ASK);
+
+    Settings_RK4 settings;
+    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
+
+    settings.dt = ui->lineEdit_dt->text().toDouble();
+    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
+
+
+    modeling_flight_3D raschet(nu, settings);
+    raschet.propagate();
+    raschet.printCalcDataToFile(settings.file_name);
+
+    QMessageBox::information(this, "Сообщение", "Расчет окончен");
+}
+
+void MainWindow::on_B_Startatm_clicked() {
     NU_RK4 nu;
     nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
     nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
@@ -155,8 +182,7 @@ void MainWindow::on_B_Startatm_clicked()
     QMessageBox::information(this, "Сообщение", "Расчет окончен");
 }
 
-void MainWindow::on_B_Optima_clicked()
-{
+void MainWindow::on_B_Optima_clicked() {
     NU_RK4 nu_cur,nu_temp;
     nu_cur.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
     nu_cur.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
@@ -307,8 +333,7 @@ void MainWindow::on_B_Optima_clicked()
 //    return x_cur;
 //}
 
-void MainWindow::on_B_Opt_DFP_clicked()
-{
+void MainWindow::on_B_Opt_DFP_clicked() {
     NU_RK4 nu_cur;
     nu_cur.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
     nu_cur.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
@@ -425,7 +450,7 @@ void MainWindow::on_B_Opt_DFP_clicked()
 
         // 6. Вычисляем новую матрицу А каждые сколько-то интераций, изначально каждую
 
-        if (counter % 1 == 0){
+        if (counter % 1 == 0) {
             Matr dA = A;
 
             dw = min_VxV(grad_x_k_1,grad_x_k); // 7. Вычисляем
@@ -451,7 +476,6 @@ void MainWindow::on_B_Opt_DFP_clicked()
 
             A = min_MxM(A,dA); // 11. Вычисляем новую матрицу
 
-
         }
 
 
@@ -468,7 +492,7 @@ void MainWindow::on_B_Opt_DFP_clicked()
 //            lambda_mn /= 2;
 //        }
 
-        if (isnan(A[0][0]) || isinf(A[0][0])){break;}
+        if (isnan(A[0][0]) || isinf(A[0][0])) { break; }
 
         x_k_1 = x_k; // Назначаем старой точкой новуюю для следующей итерации
         ui->TB_vivod->append(out);
@@ -481,8 +505,7 @@ void MainWindow::on_B_Opt_DFP_clicked()
     integr_RK4_upr(nu_cur, settings,x_k);
 }
 
-void MainWindow::on_B_Optima_new_clicked()
-{
+void MainWindow::on_B_Optima_new_clicked() {
     NU_RK4 nu_cur;
     nu_cur.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
     nu_cur.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
@@ -580,7 +603,7 @@ void MainWindow::on_B_Optima_new_clicked()
 
         qApp->processEvents();
 
-        if (counter % 500 == 0){
+        if (counter % 500 == 0) {
             lambda1 *= 2;
             lambda2 *= 2;
         }
@@ -589,3 +612,5 @@ void MainWindow::on_B_Optima_new_clicked()
         counter++;
     }
 }
+
+

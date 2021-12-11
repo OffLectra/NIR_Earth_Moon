@@ -1,7 +1,13 @@
-    #ifndef RK4_INTEGRATOR_H
+#ifndef RK4_INTEGRATOR_H
 #define RK4_INTEGRATOR_H
-#include "QString"
-#include "QDateTime"
+
+#include <QString>
+#include <QDateTime>
+#include <math.h>
+#include <iostream>
+#include <iomanip>
+#include <cmath>
+#include <fstream>
 #include "perevod_.h"
 #include "functions.h"
 
@@ -14,7 +20,6 @@ typedef struct {
     double d_gamma_dt;
     double beta;
     double Sbalxbezm;
-
 } NU_RK4; //название типа структуры
 
 typedef struct {
@@ -23,7 +28,6 @@ typedef struct {
     double eps = 1E-6;
     bool is_export_data_to_file = true; //состояние "выводить ли данные в файл"
     QString file_name = "result.csv";   //имя файла
-
 } Settings_RK4;
 
 double integr_RK4(NU_RK4 nu, Settings_RK4 settings);
@@ -42,6 +46,5 @@ enum d_dt_K {
     d_m_dt,
     d_LAST
 };
-
 
 #endif // RK4_INTEGRATOR_H

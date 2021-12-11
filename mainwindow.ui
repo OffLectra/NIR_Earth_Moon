@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1091</width>
-    <height>859</height>
+    <width>1162</width>
+    <height>967</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,7 +29,7 @@
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="1,1,2">
+   <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="1,0,2">
     <item>
      <widget class="QGroupBox" name="groupBox_perevod">
       <property name="title">
@@ -1158,6 +1158,13 @@
          </layout>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="B_start_Class_propagate">
+         <property name="text">
+          <string>Запуск</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -1171,7 +1178,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1091</width>
+     <width>1162</width>
      <height>25</height>
     </rect>
    </property>
