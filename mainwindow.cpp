@@ -649,3 +649,42 @@ void MainWindow::on_B_start_Class_propagate_2_clicked()
 
     QMessageBox::information(this, "Сообщение", "Расчет окончен");
 }
+
+void MainWindow::on_B_start_gradD_clicked()
+{
+    NU_RK4 nu;
+    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
+    nu.P = ui->lineEdit_P->text().toDouble();
+    nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
+    nu.beta = fabs(nu.P/(nu.P_ud*g0));
+    nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
+    nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
+
+    nu.v_KE = AGESK_to_KE(nu.v_ASK);
+
+    Settings_RK4 settings;
+    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
+
+    settings.dt = ui->lineEdit_dt->text().toDouble();
+    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
+
+
+    modeling_flight_2D raschet(nu, settings);
+    Vector Uparam {nu.gamma_0, nu.d_gamma_dt};
+
+    gradDescent opt(ui->TB_vivod);
+    Vector Uisk = opt.gradD(raschet,Uparam);
+
+    raschet.propUpr(Uisk);
+    raschet.printCalcDataToFile(settings.file_name);
+
+    QMessageBox::information(this, "Сообщение", "Расчет градиентного спуска окончен");
+
+}
+

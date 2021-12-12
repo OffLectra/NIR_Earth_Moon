@@ -185,6 +185,9 @@ void modeling_flight_2D::propagate() {
     double dt = config.dt;
     double beta = data.beta;
 
+    if (!isSaveOldData) {
+        resultData.clear();
+    }
     resultData.append(StepData(vec_ASK, vec_KE));
 
     int shag = 0;

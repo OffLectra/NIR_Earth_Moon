@@ -38,6 +38,7 @@ Vector mp_MxV(Matr M, Vector V);
 Vector mp_cxV(double num, Vector V);
 Matr mp_cxM(double num, Matr M);
 double smp_VxV(Vector V1, Vector V2);
+Vector mp_VxV(Vector V1, Vector V2);
 Vector add_VxV(Vector V1, Vector V2);
 Matr add_MxM(Matr M1, Matr M2);
 Vector min_VxV(Vector V1, Vector V2);

@@ -93,6 +93,14 @@ double smp_VxV(Vector V1, Vector V2) {
     return out;
 }
 
+Vector mp_VxV(Vector V1, Vector V2) {
+    Vector out;
+    for (int ix = 0; ix < V1.length(); ix++) {
+        out.append(V1[ix]*V2[ix]);
+    }
+    return out;
+}
+
 Matr add_MxM(Matr M1, Matr M2) {
     int rows = M1.length(), columns = M1.at(0).length();
     for(int row = 0; row < rows; ++row) {

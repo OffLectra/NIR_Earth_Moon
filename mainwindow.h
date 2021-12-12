@@ -6,6 +6,7 @@
 #include "perevod_.h"
 #include "RK4_integrator.h"
 #include "modeling_flight_rk4.h"
+#include "optima.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -39,6 +40,8 @@ private slots:
     void on_B_start_Class_propagate_clicked();
 
     void on_B_start_Class_propagate_2_clicked();
+
+    void on_B_start_gradD_clicked();
 
 private:
     Ui::MainWindow *ui;

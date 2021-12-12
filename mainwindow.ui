@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1152</width>
-    <height>923</height>
+    <width>1267</width>
+    <height>1013</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1178,11 +1178,22 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="B_start_gradD">
+         <property name="text">
+          <string>Градиентный спуск</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
     <item>
-     <widget class="QTextBrowser" name="TB_vivod"/>
+     <widget class="QTextBrowser" name="TB_vivod">
+      <property name="tabStopWidth">
+       <number>20</number>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -1191,7 +1202,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1152</width>
+     <width>1267</width>
      <height>25</height>
     </rect>
    </property>

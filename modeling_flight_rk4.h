@@ -20,7 +20,7 @@ public:
     ASK_param_vec vASK;
     Kep_param_vec vKE;
     QDateTime DT;
-    double time;
+    double globalTime;
     double alpha, gamma, gt, TETA, beta; //2D
 
     StepData() {}
@@ -64,6 +64,7 @@ class modeling_flight_2D {
     NU_RK4 data;
     Settings_RK4 config;
     QVector<StepData> resultData;
+    bool isSaveOldData = false;
     Vector upr;
 
 public:
