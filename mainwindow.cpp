@@ -182,6 +182,8 @@ void MainWindow::on_B_Startatm_clicked() {
     QMessageBox::information(this, "Сообщение", "Расчет окончен");
 }
 
+
+// Решение градиентым спуском (В лоб)
 void MainWindow::on_B_Optima_clicked() {
     NU_RK4 nu_cur,nu_temp;
     nu_cur.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();

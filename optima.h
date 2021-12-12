@@ -5,15 +5,17 @@
 #include <QWidget>
 
 #include <math.h>
-#include "math_model_3d.h"
-#include "RK4_integrator.h"
+#include "modeling_flight_rk4.h"
 
 class gradDescent {
 
 public:
+    Vector dU = {1E-4,1E-7};
+
     gradDescent () {}
 
-    Vector grad(Vector upr);
+
+    Vector grad(modeling_flight_2D flight,Vector upr);
 
 
 
