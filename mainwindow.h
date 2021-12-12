@@ -20,7 +20,6 @@ public:
     ~MainWindow();
 
 
-
 private slots:
 
     void on_pushButton_KE_to_AGESK_clicked();
@@ -38,6 +37,8 @@ private slots:
     void on_B_Optima_new_clicked();
 
     void on_B_start_Class_propagate_clicked();
+
+    void on_B_start_Class_propagate_2_clicked();
 
 private:
     Ui::MainWindow *ui;

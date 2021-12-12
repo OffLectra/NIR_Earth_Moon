@@ -182,6 +182,8 @@ void modeling_flight_2D::propagate() {
     ASK_param_vec vec_ASK = data.v_ASK, vec_ASK_temp = vec_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
     //2) явл врем перем для хран век сост на подшагах инт ((y, y1, y2, y3)_i, (y, y1, y2, y3)_i+1, ...);
     Kep_param_vec vec_KE = data.v_KE;
+    double dt = config.dt;
+    double beta = data.beta;
 
     resultData.append(StepData(vec_ASK, vec_KE));
 
@@ -203,14 +205,14 @@ void modeling_flight_2D::propagate() {
         matr_K[0][d_Vy_dt] = f_d_Vy_dt(f_gy(vec_ASK_temp.y, f_r(vec_ASK_temp.x, vec_ASK_temp.y)), data.P, vec_ASK_temp.m, f_gamma(upr[u_gamma], upr[u_dgdt], vec_ASK_temp.Time));
         matr_K[0][d_x_dt ] = f_d_x_dt(vec_ASK_temp.Vx);
         matr_K[0][d_y_dt ] = f_d_y_dt(vec_ASK_temp.Vy);
-        matr_K[0][d_m_dt ] = f_d_m_dt(data.beta);
+        matr_K[0][d_m_dt ] = f_d_m_dt(beta);
 
-        vec_ASK_temp.Vx = vec_ASK.Vx + config.dt*matr_K[0][d_Vx_dt]*0.5;
-        vec_ASK_temp.Vy = vec_ASK.Vy + config.dt*matr_K[0][d_Vy_dt]*0.5;
-        vec_ASK_temp.x  = vec_ASK.x + config.dt*matr_K[0][d_x_dt]*0.5;
-        vec_ASK_temp.y  = vec_ASK.y + config.dt*matr_K[0][d_y_dt]*0.5;
-        vec_ASK_temp.m  = vec_ASK.m + config.dt*matr_K[0][d_m_dt]*0.5;
-        vec_ASK_temp.Time = vec_ASK.Time + config.dt*0.5;
+        vec_ASK_temp.Vx = vec_ASK.Vx + dt*matr_K[0][d_Vx_dt]*0.5;
+        vec_ASK_temp.Vy = vec_ASK.Vy + dt*matr_K[0][d_Vy_dt]*0.5;
+        vec_ASK_temp.x  = vec_ASK.x  + dt*matr_K[0][d_x_dt]*0.5;
+        vec_ASK_temp.y  = vec_ASK.y  + dt*matr_K[0][d_y_dt]*0.5;
+        vec_ASK_temp.m  = vec_ASK.m  + dt*matr_K[0][d_m_dt]*0.5;
+        vec_ASK_temp.Time = vec_ASK.Time + dt*0.5;
 
 // 2)------------------------
 
@@ -218,14 +220,14 @@ void modeling_flight_2D::propagate() {
         matr_K[1][d_Vy_dt] = f_d_Vy_dt(f_gy(vec_ASK_temp.y, f_r(vec_ASK_temp.x, vec_ASK_temp.y)), data.P, vec_ASK_temp.m, f_gamma(upr[u_gamma], upr[u_dgdt], vec_ASK_temp.Time));
         matr_K[1][d_x_dt ] = f_d_x_dt(vec_ASK_temp.Vx);
         matr_K[1][d_y_dt ] = f_d_y_dt(vec_ASK_temp.Vy);
-        matr_K[1][d_m_dt ] = f_d_m_dt(data.beta);
+        matr_K[1][d_m_dt ] = f_d_m_dt(beta);
 
-        vec_ASK_temp.Vx = vec_ASK.Vx + config.dt*matr_K[1][d_Vx_dt]*0.5;
-        vec_ASK_temp.Vy = vec_ASK.Vy + config.dt*matr_K[1][d_Vy_dt]*0.5;
-        vec_ASK_temp.x  = vec_ASK.x + config.dt* matr_K[1][d_x_dt]*0.5;
-        vec_ASK_temp.y  = vec_ASK.y + config.dt* matr_K[1][d_y_dt]*0.5;
-        vec_ASK_temp.m  = vec_ASK.m + config.dt* matr_K[1][d_m_dt]*0.5;
-        vec_ASK_temp.Time = vec_ASK.Time + config.dt*0.5;
+        vec_ASK_temp.Vx = vec_ASK.Vx + dt*matr_K[1][d_Vx_dt]*0.5;
+        vec_ASK_temp.Vy = vec_ASK.Vy + dt*matr_K[1][d_Vy_dt]*0.5;
+        vec_ASK_temp.x  = vec_ASK.x  + dt* matr_K[1][d_x_dt]*0.5;
+        vec_ASK_temp.y  = vec_ASK.y  + dt* matr_K[1][d_y_dt]*0.5;
+        vec_ASK_temp.m  = vec_ASK.m  + dt* matr_K[1][d_m_dt]*0.5;
+        vec_ASK_temp.Time = vec_ASK.Time + dt*0.5;
 
 // 3)------------------------
 
@@ -233,14 +235,14 @@ void modeling_flight_2D::propagate() {
         matr_K[2][d_Vy_dt] = f_d_Vy_dt(f_gy(vec_ASK_temp.y, f_r(vec_ASK_temp.x, vec_ASK_temp.y)), data.P, vec_ASK_temp.m, f_gamma(upr[u_gamma], upr[u_dgdt], vec_ASK_temp.Time));
         matr_K[2][d_x_dt ] = f_d_x_dt(vec_ASK_temp.Vx);
         matr_K[2][d_y_dt ] = f_d_y_dt(vec_ASK_temp.Vy);
-        matr_K[2][d_m_dt ] = f_d_m_dt(data.beta);
+        matr_K[2][d_m_dt ] = f_d_m_dt(beta);
 
-        vec_ASK_temp.Vx = vec_ASK.Vx + config.dt*matr_K[2][d_Vx_dt];
-        vec_ASK_temp.Vy = vec_ASK.Vy + config.dt*matr_K[2][d_Vy_dt];
-        vec_ASK_temp.x  = vec_ASK.x + config.dt* matr_K[2][d_x_dt];
-        vec_ASK_temp.y  = vec_ASK.y + config.dt* matr_K[2][d_y_dt];
-        vec_ASK_temp.m  = vec_ASK.m + config.dt* matr_K[2][d_m_dt];
-        vec_ASK_temp.Time = vec_ASK.Time + config.dt;
+        vec_ASK_temp.Vx = vec_ASK.Vx + dt*matr_K[2][d_Vx_dt];
+        vec_ASK_temp.Vy = vec_ASK.Vy + dt*matr_K[2][d_Vy_dt];
+        vec_ASK_temp.x  = vec_ASK.x  + dt* matr_K[2][d_x_dt];
+        vec_ASK_temp.y  = vec_ASK.y  + dt* matr_K[2][d_y_dt];
+        vec_ASK_temp.m  = vec_ASK.m  + dt* matr_K[2][d_m_dt];
+        vec_ASK_temp.Time = vec_ASK.Time + dt;
 
 // 4)------------------------
 
@@ -248,15 +250,15 @@ void modeling_flight_2D::propagate() {
         matr_K[3][d_Vy_dt] = f_d_Vy_dt(f_gy(vec_ASK_temp.y, f_r(vec_ASK_temp.x, vec_ASK_temp.y)), data.P, vec_ASK_temp.m, f_gamma(upr[u_gamma], upr[u_dgdt], vec_ASK_temp.Time));
         matr_K[3][d_x_dt ] = f_d_x_dt(vec_ASK_temp.Vx);
         matr_K[3][d_y_dt ] = f_d_y_dt(vec_ASK_temp.Vy);
-        matr_K[3][d_m_dt ] = f_d_m_dt(data.beta);
+        matr_K[3][d_m_dt ] = f_d_m_dt(beta);
 
 //---------------------------
-        vec_ASK_temp.Vx   = vec_ASK.Vx   + config.dt*(1.0/6.0)*(matr_K[0][d_Vx_dt] + 2*matr_K[1][d_Vx_dt] + 2*matr_K[2][d_Vx_dt] + matr_K[3][d_Vx_dt]);
-        vec_ASK_temp.Vy   = vec_ASK.Vy   + config.dt*(1.0/6.0)*(matr_K[0][d_Vy_dt] + 2*matr_K[1][d_Vy_dt] + 2*matr_K[2][d_Vy_dt] + matr_K[3][d_Vy_dt]);
-        vec_ASK_temp.x    = vec_ASK.x    + config.dt*(1.0/6.0)*(matr_K[0][d_x_dt ] + 2*matr_K[1][d_x_dt ] + 2*matr_K[2][d_x_dt ] + matr_K[3][d_x_dt ]);
-        vec_ASK_temp.y    = vec_ASK.y    + config.dt*(1.0/6.0)*(matr_K[0][d_y_dt ] + 2*matr_K[1][d_y_dt ] + 2*matr_K[2][d_y_dt ] + matr_K[3][d_y_dt ]);
-        vec_ASK_temp.m    = vec_ASK.m    + config.dt*(1.0/6.0)*(matr_K[0][d_m_dt ] + 2*matr_K[1][d_m_dt ] + 2*matr_K[2][d_m_dt ] + matr_K[3][d_m_dt ]);
-        vec_ASK_temp.Time = vec_ASK.Time + config.dt;
+        vec_ASK_temp.Vx   = vec_ASK.Vx   + dt*(1.0/6.0)*(matr_K[0][d_Vx_dt] + 2*matr_K[1][d_Vx_dt] + 2*matr_K[2][d_Vx_dt] + matr_K[3][d_Vx_dt]);
+        vec_ASK_temp.Vy   = vec_ASK.Vy   + dt*(1.0/6.0)*(matr_K[0][d_Vy_dt] + 2*matr_K[1][d_Vy_dt] + 2*matr_K[2][d_Vy_dt] + matr_K[3][d_Vy_dt]);
+        vec_ASK_temp.x    = vec_ASK.x    + dt*(1.0/6.0)*(matr_K[0][d_x_dt ] + 2*matr_K[1][d_x_dt ] + 2*matr_K[2][d_x_dt ] + matr_K[3][d_x_dt ]);
+        vec_ASK_temp.y    = vec_ASK.y    + dt*(1.0/6.0)*(matr_K[0][d_y_dt ] + 2*matr_K[1][d_y_dt ] + 2*matr_K[2][d_y_dt ] + matr_K[3][d_y_dt ]);
+        vec_ASK_temp.m    = vec_ASK.m    + dt*(1.0/6.0)*(matr_K[0][d_m_dt ] + 2*matr_K[1][d_m_dt ] + 2*matr_K[2][d_m_dt ] + matr_K[3][d_m_dt ]);
+        vec_ASK_temp.Time = vec_ASK.Time + dt;
 
 
         h_izm = f_h_izm(f_V(vec_ASK_temp.Vx, vec_ASK_temp.Vy), f_r(vec_ASK_temp.x, vec_ASK_temp.y));
@@ -265,7 +267,7 @@ void modeling_flight_2D::propagate() {
             if (fabs(h_izm-config.hf)>config.eps)
             {
                 EoS = false;
-                config.dt /= 10;
+                dt /= 10;
             } else {
                 EoR = true;
             }
@@ -288,7 +290,7 @@ void modeling_flight_2D::propagate() {
             result.TETA = f_TETA(vec_ASK.Vx, vec_ASK.Vy);
             result.gamma = f_gamma(upr[u_gamma], upr[u_dgdt], vec_ASK.Time);
             result.gt = upr[u_dgdt];
-            result.time = vec_ASK.Time;
+            result.globalTime = vec_ASK.Time;
             result.vASK = vec_ASK;
             result.vKE = vec_KE;
           //  result.DT = data.DT_0.addMSecs(1000*result.time);
@@ -301,6 +303,12 @@ void modeling_flight_2D::propagate() {
             vec_ASK_temp = vec_ASK;
         }
     }
+}
+
+double modeling_flight_2D::propUpr(Vector U) {
+    upr = U;
+    propagate();
+    return resultData.last().vASK.Time;
 }
 
 QString StepData::Str_All_Header(QString del) {

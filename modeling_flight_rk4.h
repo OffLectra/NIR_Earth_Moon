@@ -60,8 +60,6 @@ public:
 
 
 
-
-
 class modeling_flight_2D {
     NU_RK4 data;
     Settings_RK4 config;
@@ -78,9 +76,11 @@ public:
         return resultData;
     }
 
-    void printCalcDataToFile(QString filename);
 
+    void printCalcDataToFile(QString filename);
     void propagate();
+
+    double propUpr(Vector U);
 };
 
 

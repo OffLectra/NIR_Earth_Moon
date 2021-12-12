@@ -32,141 +32,45 @@ double f_r(double x, double y, double z);
 double f_V(double Vx, double Vy, double Vz);
 bool angle_compare(double u1, double u2, double tol);
 
-inline Vector mp_MxV(Matr M, Vector V) {
-    int rows = V.length(), columns = M.at(0).length();
+// inline - функция описывается в том же месте, где объявлена (в хедере)
 
-    Vector out = Vector(V.length());
-
-    for (int ix = 0; ix < rows; ix++) {
-        out[ix] = 0.0;
-        for (int jx = 0; jx < columns; jx++)
-            out[ix] += M[ix][jx] * V[jx];
-    }
-    return out;
-}
-
-inline Vector mp_cxV(double num, Vector V) {
-
-    for (int ix = 0; ix < V.length(); ix++)
-    {
-        V[ix] *= num;
-    }
-    return V;
-}
-
-inline Matr mp_cxM(double num, Matr M) {
-    int rows = M.length(), columns = M.at(0).length();
-    for(int row = 0; row < rows; ++row) {
-        for(int col = 0; col < columns; ++col) {
-            M[row][col] *= num;
-        }
-    }
-    return M;
-}
-
-inline double smp_VxV(Vector V1, Vector V2) {
-    double out = 0.0;
-    for (int ix = 0; ix < V1.length(); ix++) {
-        out += V1[ix]*V2[ix];
-    }
-    return out;
-}
-
-inline Vector add_VxV(Vector V1, Vector V2) {
-    for (int ix = 0; ix < V1.length(); ix++) {
-        V1[ix] += V2[ix];
-    }
-    return V1;
-}
-
-inline Matr add_MxM(Matr M1, Matr M2) {
-    int rows = M1.length(), columns = M1.at(0).length();
-    for(int row = 0; row < rows; ++row) {
-        for(int col = 0; col < columns; ++col) {
-            M1[row][col] += M2[row][col];
-        }
-    }
-    return M1;
-}
-
-inline Vector min_VxV(Vector V1, Vector V2) {
-
-    for (int ix = 0; ix < V1.length(); ix++) {
-        V1[ix] -= V2[ix];
-    }
-    return V1;
-}
-
-inline Matr min_MxM(Matr M1, Matr M2) {
-    int rows = M1.length(), columns = M1.at(0).length();
-    for(int row = 0; row < rows; ++row) {
-        for(int col = 0; col < columns; ++col) {
-            M1[row][col] -= M2[row][col];
-        }
-    }
-    return M1;
-}
-
-inline Matr mp_VxVT(Vector V) {
-    int rows = V.length(), columns = V.length();
-
-    Matr out = Matr(rows).fill(Vector(columns));
-
-    for (int ix = 0; ix < rows; ix++) {
-        for (int jx = 0; jx < columns; jx++)
-            out[ix][jx] = V[ix] * V[jx];
-    }
-    return out;
-}
-
-inline Matr trans(Matr M) {                             // транспонирование
-    int rows = M.length(), columns = M.at(0).length();
-    int new_rows = columns, new_columns = rows;
-    Matr MT = Matr(new_rows).fill(Vector(new_columns).fill(0.0));
-    for(int row = 0; row < rows; ++row) {
-        for(int col = 0; col < columns; ++col) {
-            MT[col][row] = M[row][col];
-        }
-    }
-    return MT;
-}
+Vector mp_MxV(Matr M, Vector V);
+Vector mp_cxV(double num, Vector V);
+Matr mp_cxM(double num, Matr M);
+double smp_VxV(Vector V1, Vector V2);
+Vector add_VxV(Vector V1, Vector V2);
+Matr add_MxM(Matr M1, Matr M2);
+Vector min_VxV(Vector V1, Vector V2);
+Matr min_MxM(Matr M1, Matr M2);
+Matr mp_VxVT(Vector V);
+Matr trans(Matr M);
 
 class vXYZ {
 public:
-    vXYZ() {}
-    vXYZ(double x0,double y0,double z0, bool normalize = false) {
-        x=x0;   y=y0;   z=z0;
-    }
-
+    vXYZ();
+    vXYZ(double x0, double y0, double z0);
     double x = 0.0,y = 0.0,z = 0.0;
-    bool norm = false;
-    double l = 0.0;
     enum coordinates {
         c_x = 0,
         c_y,
         c_z,
         LAST_coord
     };
-
-    double len () {
-        if (norm) {
-            return l;
-        }else {
-            return sqrt(x*x+y*y+z*z);
-        }
-    }
-
-    void normalize () {
-        l = len();
-        if (l != 0.0) {
-            x /= len();
-            y /= len();
-            z /= len();
-            norm = true;
-        }
-    }
-
+    double len ();
+    vXYZ normalize ();
     int kol_params = 3;
 };
+
+//void foo() {
+//    vXYZ kozulia = vXYZ(1,2,3); // 1
+//    vXYZ kozulia1(1,2,3);       // 2
+
+//    vXYZ k = kozulia;           // 3
+
+//    vXYZ k1;                    // 4
+//    k1.x = 8;
+//    k1.y = 9;
+//    k1.z = 2;
+//}
 
 #endif // HELP_FUNCTION_H
