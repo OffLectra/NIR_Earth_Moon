@@ -19,13 +19,41 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+NU_RK4 MainWindow::prepareNUASK() {
+    NU_RK4 nu;
+    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
+    nu.P = ui->lineEdit_P->text().toDouble();
+    nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
+    nu.beta = fabs(nu.P/(nu.P_ud*g0));
+    nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
+    nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
+    nu.v_KE = AGESK_to_KE(nu.v_ASK);
+    nu.Sbalxbezm = ui->lineEdit_Cx->text().toDouble()* ui->lineEdit_Sm->text().toDouble() / 2;
+    return nu;
+}
+
+Settings_RK4 MainWindow::prepareSettings() {
+    Settings_RK4 settings;
+    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
+
+    settings.dt = ui->lineEdit_dt->text().toDouble();
+    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
+    return settings;
+}
+
 void MainWindow::on_pushButton_KE_to_AGESK_clicked() {
     Kep_param_vec v_KE;
 
     v_KE.a = ui->lineEdit_KE_a->text().toDouble()  ;
     v_KE.e = ui->lineEdit_KE_e->text().toDouble();
     v_KE.i = ui->lineEdit_KE_i->text().toDouble()   *toRad;
-    v_KE.RAAN = ui->lineEdit_KE_RAAN->text().toDouble()*toRad;
+    v_KE.RAAN = ui->lineEdit_KE_RAAN->text().toDouble()  *toRad;
     v_KE.om = ui->lineEdit_KE_omega->text().toDouble()  *toRad;
     v_KE.u = ui->lineEdit_KE_u->text().toDouble()   *toRad;
 
@@ -38,7 +66,6 @@ void MainWindow::on_pushButton_KE_to_AGESK_clicked() {
     ui->lineEdit_ASK_Vx0->setText(QString::number(v_AGESK.Vx));
     ui->lineEdit_ASK_Vy0->setText(QString::number(v_AGESK.Vy));
     ui->lineEdit_ASK_Vz0->setText(QString::number(v_AGESK.Vz));
-
 }
 
 void MainWindow::on_pushButton_AGESK_to_KE_clicked() {
@@ -60,11 +87,7 @@ void MainWindow::on_pushButton_AGESK_to_KE_clicked() {
     ui->lineEdit_KE_RAAN->setText(QString::number(v_KE.RAAN_d));
     ui->lineEdit_KE_omega->setText(QString::number(v_KE.om_d));
     ui->lineEdit_KE_u->setText(QString::number(v_KE.u_d));
-
 }
-
-
-//-----
 
 //----------------------------------------------
 //---------------...----------...---------------
@@ -89,94 +112,91 @@ void MainWindow::on_pushButton_AGESK_to_KE_clicked() {
 //-----------------------.----------------------
 //----------------------------------------------
 
-
 void MainWindow::on_B_start_clicked() {
-    NU_RK4 nu;
-    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
-    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
-    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
-    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
-    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
-    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
-    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
-    nu.P = ui->lineEdit_P->text().toDouble();
-    nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
-    nu.beta = fabs(nu.P/(nu.P_ud*g0));
-    nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
-    nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
+//    NU_RK4 nu;
+//    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+//    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+//    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+//    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+//    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+//    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+//    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
+//    nu.P = ui->lineEdit_P->text().toDouble();
+//    nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
+//    nu.beta = fabs(nu.P/(nu.P_ud*g0));
+//    nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
+//    nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
 
-    nu.v_KE = AGESK_to_KE(nu.v_ASK);
+//    nu.v_KE = AGESK_to_KE(nu.v_ASK);
 
-    Settings_RK4 settings;
-    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
+//    Settings_RK4 settings;
+//    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
 
-    settings.dt = ui->lineEdit_dt->text().toDouble();
-    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
+//    settings.dt = ui->lineEdit_dt->text().toDouble();
+//    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
 
-    integr_RK4(nu, settings);
+    integr_RK4(prepareNUASK(), prepareSettings());
 
     QMessageBox::information(this, "Сообщение", "Расчет окончен");
 }
 
 void MainWindow::on_B_start_Class_propagate_clicked() {
-    NU_RK4 nu;
-    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
-    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
-    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
-    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
-    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
-    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
-    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
-    nu.P = ui->lineEdit_P->text().toDouble();
-    nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
-    nu.beta = fabs(nu.P/(nu.P_ud*g0));
-    nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
-    nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
+//    NU_RK4 nu;
+//    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+//    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+//    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+//    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+//    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+//    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+//    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
+//    nu.P = ui->lineEdit_P->text().toDouble();
+//    nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
+//    nu.beta = fabs(nu.P/(nu.P_ud*g0));
+//    nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
+//    nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
 
-    nu.v_KE = AGESK_to_KE(nu.v_ASK);
+//    nu.v_KE = AGESK_to_KE(nu.v_ASK);
 
-    Settings_RK4 settings;
-    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
+//    Settings_RK4 settings;
+//    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
 
-    settings.dt = ui->lineEdit_dt->text().toDouble();
-    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
+//    settings.dt = ui->lineEdit_dt->text().toDouble();
+//    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
 
 
-    modeling_flight_3D raschet(nu, settings);
+    modeling_flight_3D raschet(prepareNUASK(), prepareSettings());
     raschet.propagate();
-    raschet.printCalcDataToFile(settings.file_name);
+    raschet.printCalcDataToFile(prepareSettings().file_name);
 
     QMessageBox::information(this, "Сообщение", "Расчет окончен");
 }
 
 void MainWindow::on_B_Startatm_clicked() {
-    NU_RK4 nu;
-    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
-    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
-    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
-    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
-    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
-    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
-    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
-    nu.P = ui->lineEdit_P->text().toDouble();
-    nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
-    nu.beta = fabs(nu.P/(nu.P_ud*g0));
-    nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
-    nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
+//    NU_RK4 nu;
+//    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+//    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+//    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+//    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+//    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+//    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+//    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
+//    nu.P = ui->lineEdit_P->text().toDouble();
+//    nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
+//    nu.beta = fabs(nu.P/(nu.P_ud*g0));
+//    nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
+//    nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
 
-    nu.v_KE = AGESK_to_KE(nu.v_ASK);
+//    nu.v_KE = AGESK_to_KE(nu.v_ASK);
 
-    nu.Sbalxbezm = ui->lineEdit_Cx->text().toDouble()* ui->lineEdit_Sm->text().toDouble() / 2;
+//    nu.Sbalxbezm = ui->lineEdit_Cx->text().toDouble()* ui->lineEdit_Sm->text().toDouble() / 2;
 
+//    Settings_RK4 settings;
+//    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
 
-    Settings_RK4 settings;
-    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
+//    settings.dt = ui->lineEdit_dt->text().toDouble();
+//    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
 
-    settings.dt = ui->lineEdit_dt->text().toDouble();
-    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
-
-    integr_RK4_atm(nu, settings);
-
+    integr_RK4_atm(prepareNUASK(), prepareSettings());
 
 
     QMessageBox::information(this, "Сообщение", "Расчет окончен");
@@ -336,62 +356,48 @@ void MainWindow::on_B_Optima_clicked() {
 //}
 
 void MainWindow::on_B_Opt_DFP_clicked() {
-    NU_RK4 nu_cur;
-    nu_cur.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
-    nu_cur.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
-    nu_cur.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
-    nu_cur.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
-    nu_cur.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
-    nu_cur.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
-    nu_cur.v_ASK.m = ui->lineEdit_m->text().toDouble();
-    nu_cur.P = ui->lineEdit_P->text().toDouble();
-    nu_cur.P_ud = ui->lineEdit_P_ud->text().toDouble();
-    nu_cur.beta = fabs(nu_cur.P/(nu_cur.P_ud*g0));
-    nu_cur.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
-    nu_cur.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
+    NU_RK4 nu_cur = prepareNUASK();
+//    nu_cur.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+//    nu_cur.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+//    nu_cur.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+//    nu_cur.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+//    nu_cur.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+//    nu_cur.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+//    nu_cur.v_ASK.m = ui->lineEdit_m->text().toDouble();
+//    nu_cur.P = ui->lineEdit_P->text().toDouble();
+//    nu_cur.P_ud = ui->lineEdit_P_ud->text().toDouble();
+//    nu_cur.beta = fabs(nu_cur.P/(nu_cur.P_ud*g0));
+//    nu_cur.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
+//    nu_cur.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
+//    nu_cur.v_KE = AGESK_to_KE(nu_cur.v_ASK);
+//    nu_cur.Sbalxbezm = ui->lineEdit_Cx->text().toDouble()* ui->lineEdit_Sm->text().toDouble() / 2;
 
-    nu_cur.v_KE = AGESK_to_KE(nu_cur.v_ASK);
+    Settings_RK4 settings = prepareSettings();
+//    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
+//    settings.is_export_data_to_file = false;
+//    settings.dt = ui->lineEdit_dt->text().toDouble();
+//    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
 
-    nu_cur.Sbalxbezm = ui->lineEdit_Cx->text().toDouble()* ui->lineEdit_Sm->text().toDouble() / 2;
-
-
-    Settings_RK4 settings;
-    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
-    settings.is_export_data_to_file = false;
-    settings.dt = ui->lineEdit_dt->text().toDouble();
-    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
 
     double eps = 1E-6; // точность проверки условия выхода их расчета (нашли минимум)
     double f_x_k = 0, f_x_k_1=10;
-
     Vector x_0 = {nu_cur.gamma_0,nu_cur.d_gamma_dt}; //Вектор управляющих параметров (начальный)
-
     Vector x_k_1 = x_0;                 //Вектор управляющих параметров (к-1) начальная точка итерации
     Vector x_k = Vector(2).fill(0.0);   //Вектор управляющих параметров (к)   конечная  точка итерации
-
     Vector grad_x_k_1  = Vector(2).fill(2.0);   //Вектор градиентов в точке Х(к-1)
     Vector grad_x_k  = Vector(2).fill(0.0);     //Вектор градиентов в точке Х(к)
-
-
     double dgamma = 1E-4; // дельты необходимые для поиска градиентов в точках
     double ddgdt  = 1E-7;
-
-
-
     Vector deltax = {dgamma,ddgdt}; // дельты для удобства в векторной форме
-
     double lambda1 = 1;//1E-5;   // некие вспомогательные константы, понижающие влияние вектора градиента по направлениям
     double lambda2 = 1;//2E-10;
 //    double lambda_mn = 1E-3;
     Vector dw = min_VxV(grad_x_k_1,grad_x_k); // вектор разницы градиентов в точках -grad_x_k + grad_x_k_1 (т.к. антиградиенты)
     Vector dx = min_VxV(x_k,x_k_1);           // вектор разницы значения координат точек Х(к) - Х(к-1) (т.к. антиградиенты)
     Vector dxt = Vector(2).fill(0.0); //dx~      вспомогательный вектор dx + А*dw
-
     Vector lam = {lambda1,lambda2};
-
 //    Matr A = {{1.0,0.0},{0.0,1.0}};
     Matr A = {{1E-3,0.0},{0.0,2E-9}};     //Некая вспомогательная матрица метода ДФП, обычно принимают единичной, но необходимо парировать величины градиентов, поэтому немного другая
-
     int counter = 1;
     while (fabs(grad_x_k[u_gamma]-grad_x_k_1[u_gamma])>eps ||
            fabs(grad_x_k[u_dgdt]-grad_x_k_1[u_dgdt])>eps ||
@@ -400,53 +406,40 @@ void MainWindow::on_B_Opt_DFP_clicked() {
            fabs(x_k[u_dgdt]-x_k_1[u_dgdt])>eps) {
         // начало итерации поиска минимума функции
         f_x_k = f_x_k_1;
-
         f_x_k_1 = integr_RK4_upr(nu_cur, settings,x_k_1); //1.
 
 //        nu_temp.gamma_0 = nu_temp.gamma_0 + dgamma;
 //        f_dx[0] = integr_RK4(nu_temp, settings); //2.
-
 //        nu_temp = nu_cur;
-
 //        nu_temp.d_gamma_dt = nu_temp.d_gamma_dt + ddgdt; //3.
 //        f_dx[1] = integr_RK4(nu_temp, settings);
 
         QString out = QString::number(counter) + " iteration\n";
-
         out += QString("A") + "\n";
         out += QString::number(A[0][0]) + "\t" + QString::number(A[0][1]) + "\n";
         out += QString::number(A[1][0]) + "\t" + QString::number(A[1][1]) + "\n";
-
         out += QString("gamma") + "\t" + "dgdt" + "\n";
         out += QString::number(x_k_1[u_gamma]*180/M_PI) + "\t" + QString::number(x_k_1[u_dgdt ]*180/M_PI) + "\n";
-
         out += QString("fx") + "\t\n";
         out += QString::number(f_x_k_1) +"\n";
-
         grad_x_k_1 = grad_RK4_upr(x_k_1,deltax,nu_cur,settings); // 1. Вычисляем Градиент в точке X(к-1), начальной точке итерации
-
         out += QString("grad[u_gamma]") + "\t" + "grad[u_dgdt]" + "\n";
         out += QString::number(grad_x_k_1[u_gamma]) + "\t" + QString::number(grad_x_k_1[u_dgdt]) + "\n";
-
         Vector p_k_1 = mp_MxV(A,grad_x_k_1);                    // 2. Умножение матрицы А на вектор градиента в точке X(к-1) -> Вектор изменения наших параметров
         Vector lp_k_1 = {-lambda1*p_k_1[u_gamma],-lambda2*p_k_1[u_dgdt]}; // 3. Расчет вектора приращения для поиска новой точки (минус потому что ищим минимум, антиградиент)
-
         out += QString("p[u_gamma]") + "\t" + "p[u_dgdt]" + "\n";
         out += QString::number(p_k_1[u_gamma],'f',10) + "\t" + QString::number(p_k_1[u_dgdt],'f',10) + "\n";
         out += QString("lp[u_gamma]") + "\t" + "lp[u_dgdt]" + "\n";
         out += QString::number(lp_k_1[u_gamma],'f',10) + "\t" + QString::number(lp_k_1[u_dgdt],'f',10) + "\n";
-
         x_k = add_VxV(x_k_1,lp_k_1); // 4. Находим новую (конечную) точку (итерации) X(к)
 //        x_k[u_gamma] -= lam[u_gamma] * grad_x_k_1[u_gamma];
 //        x_k[u_dgdt ] -= lam[u_dgdt ] * grad_x_k_1[u_dgdt ];
         out += QString("gamma") + "\t" + "dgdt" + "\n";
         out += QString::number(x_k[u_gamma]*180/M_PI,'f',10) + "\t" + QString::number(x_k[u_dgdt ]*180/M_PI,'f',10) + "\n";
 
-
         qApp->processEvents();
 
         grad_x_k = grad_RK4_upr(x_k,deltax,nu_cur,settings); // 5. Вычисляем Градиент в точке X(к), конечной точке итерации
-
         out += QString("grad[u_gamma]k") + "\t" + "grad[u_dgdt]k" + "\n";
         out += QString::number(grad_x_k[u_gamma]) + "\t" + QString::number(grad_x_k[u_dgdt]) + "\n";
 
@@ -458,28 +451,18 @@ void MainWindow::on_B_Opt_DFP_clicked() {
             dw = min_VxV(grad_x_k_1,grad_x_k); // 7. Вычисляем
             out += QString("dw[u_gamma]k") + "\t" + "dw[u_dgdt]k" + "\n";
             out += QString::number(dw[u_gamma],'f',10.0) + "\t" + QString::number(dw[u_dgdt],'f',10) + "\n";
-
             dx = min_VxV(x_k,x_k_1);            // 8. Вычисляем
-
-
             out += QString("dx[u_gamma]") + "\t" + "dx[u_dgdt]" + "\n";
             out += QString::number(dx[u_gamma],'f',10) + "\t" + QString::number(dx[u_dgdt],'f',10) + "\n";
-
             dxt = add_VxV(dx,mp_MxV(A,dw));     // 9. Вычисляем  Здесь А еще не изменилась!!!
-
             out += QString("dxt[u_gamma]") + "\t" + "dxt[u_dgdt]" + "\n";
             out += QString::number(dxt[u_gamma],'f',10.0) + "\t" + QString::number(dxt[u_dgdt],'f',10) + "\n";
-
             dA = mp_cxM(1.0/smp_VxV(dw,dxt),mp_VxVT(dxt)); // 10. Вычисляем
-
             out += QString("dA") + "\n";
             out += QString::number(dA[0][0],'f',10) + "\t" + QString::number(dA[0][1],'f',10) + "\n";
             out += QString::number(dA[1][0],'f',10) + "\t" + QString::number(dA[1][1],'f',10) + "\n";
-
             A = min_MxM(A,dA); // 11. Вычисляем новую матрицу
-
         }
-
 
 //        if (counter % 1 == 0){
 //            lambda1 /= 2;
@@ -502,36 +485,35 @@ void MainWindow::on_B_Opt_DFP_clicked() {
         // конец итерации поиска минимума
     }
 
-
     settings.is_export_data_to_file = true;
     integr_RK4_upr(nu_cur, settings,x_k);
 }
 
 void MainWindow::on_B_Optima_new_clicked() {
-    NU_RK4 nu_cur;
-    nu_cur.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
-    nu_cur.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
-    nu_cur.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
-    nu_cur.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
-    nu_cur.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
-    nu_cur.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
-    nu_cur.v_ASK.m = ui->lineEdit_m->text().toDouble();
-    nu_cur.P = ui->lineEdit_P->text().toDouble();
-    nu_cur.P_ud = ui->lineEdit_P_ud->text().toDouble();
-    nu_cur.beta = fabs(nu_cur.P/(nu_cur.P_ud*g0));
-    nu_cur.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
-    nu_cur.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
+    NU_RK4 nu_cur = prepareNUASK();
+//    nu_cur.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+//    nu_cur.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+//    nu_cur.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+//    nu_cur.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+//    nu_cur.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+//    nu_cur.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+//    nu_cur.v_ASK.m = ui->lineEdit_m->text().toDouble();
+//    nu_cur.P = ui->lineEdit_P->text().toDouble();
+//    nu_cur.P_ud = ui->lineEdit_P_ud->text().toDouble();
+//    nu_cur.beta = fabs(nu_cur.P/(nu_cur.P_ud*g0));
+//    nu_cur.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
+//    nu_cur.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
 
-    nu_cur.v_KE = AGESK_to_KE(nu_cur.v_ASK);
+//    nu_cur.v_KE = AGESK_to_KE(nu_cur.v_ASK);
 
-    nu_cur.Sbalxbezm = ui->lineEdit_Cx->text().toDouble()* ui->lineEdit_Sm->text().toDouble() / 2;
+//    nu_cur.Sbalxbezm = ui->lineEdit_Cx->text().toDouble()* ui->lineEdit_Sm->text().toDouble() / 2;
 
 
-    Settings_RK4 settings;
-    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
-    settings.is_export_data_to_file = false;
-    settings.dt = ui->lineEdit_dt->text().toDouble();
-    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
+    Settings_RK4 settings = prepareSettings();
+//    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
+//    settings.is_export_data_to_file = false;
+//    settings.dt = ui->lineEdit_dt->text().toDouble();
+//    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
 
 
     double eps = 1E-6;
@@ -619,27 +601,27 @@ void MainWindow::on_B_Optima_new_clicked() {
 
 void MainWindow::on_B_start_Class_propagate_2_clicked()
 {
-    NU_RK4 nu;
-    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
-    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
-    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
-    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
-    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
-    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
-    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
-    nu.P = ui->lineEdit_P->text().toDouble();
-    nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
-    nu.beta = fabs(nu.P/(nu.P_ud*g0));
-    nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
-    nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
+    NU_RK4 nu = prepareNUASK();
+//    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+//    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+//    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+//    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+//    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+//    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+//    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
+//    nu.P = ui->lineEdit_P->text().toDouble();
+//    nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
+//    nu.beta = fabs(nu.P/(nu.P_ud*g0));
+//    nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
+//    nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
 
-    nu.v_KE = AGESK_to_KE(nu.v_ASK);
+//    nu.v_KE = AGESK_to_KE(nu.v_ASK);
 
-    Settings_RK4 settings;
-    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
+    Settings_RK4 settings = prepareSettings();
+//    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
 
-    settings.dt = ui->lineEdit_dt->text().toDouble();
-    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
+//    settings.dt = ui->lineEdit_dt->text().toDouble();
+//    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
 
 
     modeling_flight_2D raschet(nu, settings);
@@ -650,29 +632,28 @@ void MainWindow::on_B_start_Class_propagate_2_clicked()
     QMessageBox::information(this, "Сообщение", "Расчет окончен");
 }
 
-void MainWindow::on_B_start_gradD_clicked()
-{
-    NU_RK4 nu;
-    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
-    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
-    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
-    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
-    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
-    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
-    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
-    nu.P = ui->lineEdit_P->text().toDouble();
-    nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
-    nu.beta = fabs(nu.P/(nu.P_ud*g0));
-    nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
-    nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
+void MainWindow::on_B_start_gradD_clicked() {
+    NU_RK4 nu = prepareNUASK();
+//    nu.v_ASK.x = ui->lineEdit_ASK_x0->text().toDouble();
+//    nu.v_ASK.y = ui->lineEdit_ASK_y0->text().toDouble();
+//    nu.v_ASK.z = ui->lineEdit_ASK_z0->text().toDouble();
+//    nu.v_ASK.Vx = ui->lineEdit_ASK_Vx0->text().toDouble();
+//    nu.v_ASK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
+//    nu.v_ASK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
+//    nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
+//    nu.P = ui->lineEdit_P->text().toDouble();
+//    nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
+//    nu.beta = fabs(nu.P/(nu.P_ud*g0));
+//    nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
+//    nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
 
-    nu.v_KE = AGESK_to_KE(nu.v_ASK);
+//    nu.v_KE = AGESK_to_KE(nu.v_ASK);
 
-    Settings_RK4 settings;
-    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
+    Settings_RK4 settings = prepareSettings();
+//    settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
 
-    settings.dt = ui->lineEdit_dt->text().toDouble();
-    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
+//    settings.dt = ui->lineEdit_dt->text().toDouble();
+//    settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
 
 
     modeling_flight_2D raschet(nu, settings);
@@ -685,6 +666,23 @@ void MainWindow::on_B_start_gradD_clicked()
     raschet.printCalcDataToFile(settings.file_name);
 
     QMessageBox::information(this, "Сообщение", "Расчет градиентного спуска окончен");
-
 }
 
+
+void MainWindow::on_B_start_DFP_clicked() {
+    NU_RK4 nu = prepareNUASK();
+    Settings_RK4 settings = prepareSettings();
+
+    modeling_flight_2D raschet(nu, settings);
+    Vector Uparam {nu.gamma_0, nu.d_gamma_dt};
+
+    DFP opt(ui->TB_vivod);
+    Vector Uisk = opt.calcDFP(raschet,Uparam);
+
+    raschet.propUpr(Uisk);
+    raschet.printCalcDataToFile(settings.file_name);
+
+    QMessageBox::information(this, "Сообщение", "Расчет градиентного спуска окончен");
+
+
+}

@@ -20,6 +20,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    NU_RK4 prepareNUASK ();
+    Settings_RK4 prepareSettings ();
 
 private slots:
 
@@ -42,6 +44,8 @@ private slots:
     void on_B_start_Class_propagate_2_clicked();
 
     void on_B_start_gradD_clicked();
+
+    void on_B_start_DFP_clicked();
 
 private:
     Ui::MainWindow *ui;

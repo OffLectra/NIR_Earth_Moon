@@ -1185,6 +1185,13 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="B_start_DFP">
+         <property name="text">
+          <string>ДФП</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>

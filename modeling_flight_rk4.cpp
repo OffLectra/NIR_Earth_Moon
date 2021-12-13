@@ -309,7 +309,7 @@ void modeling_flight_2D::propagate() {
 }
 
 double modeling_flight_2D::propUpr(Vector U) {
-    upr = U;
+    upr = U; // вектор управляющих параметров
     propagate();
     return resultData.last().vASK.Time;
 }
