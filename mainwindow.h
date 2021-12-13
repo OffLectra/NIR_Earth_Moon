@@ -2,9 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "cmath"
+#include <cmath>
 #include "perevod_.h"
 #include "RK4_integrator.h"
+#include "modeling_flight_rk4.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,7 +18,6 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
 
 
 private slots:
@@ -35,6 +35,10 @@ private slots:
     void on_B_Opt_DFP_clicked();
 
     void on_B_Optima_new_clicked();
+
+    void on_B_start_Class_propagate_clicked();
+
+    void on_B_start_Class_propagate_2_clicked();
 
 private:
     Ui::MainWindow *ui;

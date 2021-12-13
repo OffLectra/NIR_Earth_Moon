@@ -19,20 +19,24 @@ SOURCES += \
     RK4_integrator.cpp \
     atm_gost_.cpp \
     functions.cpp \
-    grad_descent.cpp \
     help_function.cpp \
     main.cpp \
     mainwindow.cpp \
+    math_model_3d.cpp \
+    modeling_flight_rk4.cpp \
+    optima.cpp \
     perevod_.cpp
 
 HEADERS += \
     RK4_integrator.h \
     atm_gost_.h \
     functions.h \
-    grad_descent.h \
     help_function.h \
     koef.h \
     mainwindow.h \
+    math_model_3d.h \
+    modeling_flight_rk4.h \
+    optima.h \
     perevod_.h
 
 FORMS += \

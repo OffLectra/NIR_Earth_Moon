@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1091</width>
-    <height>859</height>
+    <width>1152</width>
+    <height>923</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,7 +29,7 @@
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="1,1,2">
+   <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="1,0,2">
     <item>
      <widget class="QGroupBox" name="groupBox_perevod">
       <property name="title">
@@ -49,7 +49,7 @@
            <widget class="QGroupBox" name="groupBox">
             <property name="minimumSize">
              <size>
-              <width>200</width>
+              <width>250</width>
               <height>300</height>
              </size>
             </property>
@@ -260,6 +260,12 @@
                 </item>
                 <item>
                  <widget class="QLineEdit" name="lineEdit_KE_omega">
+                  <property name="minimumSize">
+                   <size>
+                    <width>100</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>0</string>
                   </property>
@@ -324,10 +330,29 @@
            </widget>
           </item>
           <item>
-           <widget class="Line" name="line">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
+           <widget class="QFrame" name="frame_12">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
             </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <widget class="QPushButton" name="pushButton_KE_to_AGESK">
+               <property name="text">
+                <string>-&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_AGESK_to_KE">
+               <property name="text">
+                <string>&lt;-</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
@@ -590,29 +615,10 @@
            </widget>
           </item>
           <item>
-           <widget class="QFrame" name="frame_12">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_4">
-             <item>
-              <widget class="QPushButton" name="pushButton_KE_to_AGESK">
-               <property name="text">
-                <string>-&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_AGESK_to_KE">
-               <property name="text">
-                <string>&lt;-</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
            </widget>
           </item>
           <item>
@@ -1158,6 +1164,20 @@
          </layout>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="B_start_Class_propagate">
+         <property name="text">
+          <string>Запуск</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="B_start_Class_propagate_2">
+         <property name="text">
+          <string>Запуск_упр</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -1171,7 +1191,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1091</width>
+     <width>1152</width>
      <height>25</height>
     </rect>
    </property>

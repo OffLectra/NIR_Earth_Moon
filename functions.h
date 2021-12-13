@@ -26,4 +26,5 @@ double f_hight(double r, double R_Earth);
 double f_Fax (double V, double Vx, double rho, double Sbalxbezm, double m_tec); //Sbalx = Cx * Sm/2
 double f_Fay (double V, double Vy, double rho, double Sbalxbezm, double m_tec); //Sbalx = Cx * Sm/2
 
+
 #endif // FUNCTIONS_H
