@@ -14,7 +14,7 @@ typedef struct {
     double a = 0,p = 0,r = 0,e = 0,i = 0,
     RAAN = 0,om = 0,f = 0,u = 0,i_d = 0,
     RAAN_d = 0,om_d = 0,f_d = 0,u_d = 0,
-    Vn = 0, Vr = 0, V = 0, Time = 0;         //default all angles in degrees
+    Vn = 0, Vr = 0, V = 0, Time = 0, m = 0;         //default all angles in degrees
     QString name[17] = {"a","p","r","e","i","RAAN","om","u","f","i_d",
                         "RAAN_d","om_d","u_d","f_d","Vn","Vr","V"};
     enum KE_Params {

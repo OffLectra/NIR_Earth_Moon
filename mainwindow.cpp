@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->on_pushButton_KE_to_AGESK_clicked();
+
+    ui->Plot->addGraph();
+    ui->Plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
 }
 
 MainWindow::~MainWindow()
@@ -42,7 +45,8 @@ Settings_RK4 MainWindow::prepareSettings() {
     Settings_RK4 settings;
     settings.file_name = ui->lineEdit_file_name->text() + ui->comboBox_file_type->currentText();
 
-    settings.dt = ui->lineEdit_dt->text().toDouble();
+    settings.dt = ui->lineEdit_dt->text().toDouble();    
+    settings.af = ui->lineEdit_a_per->text().toDouble();
     settings.hf = f_h(ui->lineEdit_a_per->text().toDouble());
     return settings;
 }
@@ -683,6 +687,269 @@ void MainWindow::on_B_start_DFP_clicked() {
     raschet.printCalcDataToFile(settings.file_name);
 
     QMessageBox::information(this, "Сообщение", "Расчет градиентного спуска окончен");
+}
 
+void MainWindow::on_B_start_Task_2v_clicked()
+{
+    NU_RK4 nu0 = prepareNUASK();
+    Settings_RK4 settings0 = prepareSettings();
+    Vector a_p,t_result;
+    double ak = settings0.af; // Запоминаем величину большой полуоси конечного эллипса
+    for (int a = nu0.v_KE.a+1; a < ak; a+=100) {
+        NU_RK4 nu = nu0;      //Каждый новый рассчёт сброс параметров
+        Settings_RK4 s = settings0;
+        Vector Uparam {nu.gamma_0, nu.d_gamma_dt};
+
+        s.hf = f_h(a);
+        modeling_flight_2D raschet1(nu, s);
+
+        DFP opt(ui->TB_vivod);
+        opt.isToPrint = false;
+        Vector Uisk1 = opt.calcDFP(raschet1,Uparam);
+        double t1 = raschet1.propUpr(Uisk1);
+        Kep_param_vec newKE = raschet1.getCalcData().last().vKE;
+
+        newKE.om = 0.0;
+        newKE.u  = 0.0;
+        nu.v_ASK = KE_to_AGESK(newKE);
+        nu.v_KE = AGESK_to_KE(nu.v_ASK);
+        s.hf = f_h(ak);
+        modeling_flight_2D raschet2(nu,s);
+        Vector Uisk2 = opt.calcDFP(raschet2,Uisk1);
+        double t2 = raschet2.propUpr(Uisk2);
+
+        a_p.append(a);
+        t_result.append(t1+t2);
+
+        ui->TB_vivod->append(QString("Result for ap = %1:\n\t t = %2").
+                             arg(a).arg(t1+t2));
+    }
+    QStringList a_pSL = vec2str(a_p,'f',0);
+    QStringList t_rSL = vec2str(t_result);
+    for (int i = 0; i < t_result.length(); ++i) {
+        if (t_result[i]>1000.0) {
+            a_p.removeAt(i);
+            t_result.removeAt(i);
+        }
+        ui->TB_vivod->append(QString("%1 | %2").arg(a_pSL[i]).arg(t_rSL[i]));
+    }
+
+
+
+    plot_draw_graph(ui->Plot,"ap","t, с",a_p,t_result);
+}
+
+void MainWindow::on_B_start_Task_3v_clicked()
+{
+    NU_RK4 nu0 = prepareNUASK();
+    Settings_RK4 settings0 = prepareSettings();
+    Vector a_p1,a_p2,t_result;
+
+    double da1 = 1000, da2 = 5000;
+    double ak = settings0.af; // Запоминаем величину большой полуоси конечного эллипса
+    for (int a1 = nu0.v_KE.a+1; a1 < ak-da1-da2-1; a1+=da1) {
+        NU_RK4 nu = nu0;      //Каждый новый рассчёт сброс параметров
+        Settings_RK4 s = settings0;
+        Vector Uparam {nu.gamma_0, nu.d_gamma_dt};
+
+        s.hf = f_h(a1);
+        modeling_flight_2D raschet1(nu, s);
+
+        DFP opt(ui->TB_vivod);
+        opt.isToPrint = false;
+        Vector Uisk1 = opt.calcDFP(raschet1,Uparam);
+        double t1 = raschet1.propUpr(Uisk1);
+        ui->TB_vivod->append(QString("Полет до а = %1:\t t1 = %2").arg(a1).arg(t1));
+        for (int a2 = a1+da1; a2 < ak; a2+=da2) {
+            Kep_param_vec newKE1 = raschet1.getCalcData().last().vKE;
+            newKE1.om = 0.0;
+            newKE1.u  = 0.0;
+            nu.v_ASK = KE_to_AGESK(newKE1);
+            nu.v_KE = AGESK_to_KE(nu.v_ASK);
+            s.hf = f_h(a2);
+            modeling_flight_2D raschet2(nu,s);
+            Vector Uisk2 = opt.calcDFP(raschet2,Uisk1);
+            double t2 = raschet2.propUpr(Uisk2);
+            ui->TB_vivod->append(QString("Полет до а = %1:\t t2 = %2").arg(a2).arg(t2));
+
+            if (t2>2000.0) break;
+
+            Kep_param_vec newKE2 = raschet2.getCalcData().last().vKE;
+            newKE2.om = 0.0;
+            newKE2.u  = 0.0;
+            nu.v_ASK = KE_to_AGESK(newKE2);
+            nu.v_KE = AGESK_to_KE(nu.v_ASK);
+            s.hf = f_h(ak);
+            modeling_flight_2D raschet3(nu,s);
+            Vector Uisk3 = opt.calcDFP(raschet3,Uisk2);
+            double t3 = raschet3.propUpr(Uisk3);
+            ui->TB_vivod->append(QString("Полет до а = %1:\t t3 = %2").arg(ak).arg(t3));
+
+            a_p1.append(a1);
+            a_p2.append(a2);
+            t_result.append(t1+t2+t3);
+
+            ui->TB_vivod->append(QString("Result for ap1 = %1, ap2 = %2:\t t = %3\t t1 = %4\t t2 = %5\t t3 = %6")
+                                 .arg(a1).arg(a2).arg(t1+t2+t3).arg(t1).arg(t2).arg(t3));
+        }
+    }
+    QStringList a_p1SL = vec2str(a_p1,'f',0);
+    QStringList a_p2SL = vec2str(a_p2,'f',0);
+    QStringList t_rSL = vec2str(t_result);
+    for (int i = 0; i < t_result.length(); ++i) {
+        if (t_result[i]>900.0 || t_result[i]<500.0) {
+            a_p1.removeAt(i);
+            a_p2.removeAt(i);
+            t_result.removeAt(i);
+        }
+        ui->TB_vivod->append(QString("%1 | %2 | %3").arg(a_p1SL[i]).arg(a_p2SL[i]).arg(t_rSL[i]));
+    }
+
+    plot_draw_graph(ui->Plot,"ap","t, с",a_p1,t_result);
 
 }
+
+void MainWindow::on_B_start_Task_4v_clicked()
+{
+    NU_RK4 nu0 = prepareNUASK();
+    Settings_RK4 settings0 = prepareSettings();
+    Vector a_p1,a_p2,a_p3,t_result;
+
+    double da1 = 1000, da2 = 5000, da3 = 2000;
+    double ak = settings0.af; // Запоминаем величину большой полуоси конечного эллипса
+    for (int a1 = nu0.v_KE.a+1; a1 < ak-da1-da2-da3-1; a1+=da1) {
+        NU_RK4 nu = nu0;      //Каждый новый рассчёт сброс параметров
+        Settings_RK4 s = settings0;
+        Vector Uparam {nu.gamma_0, nu.d_gamma_dt};
+
+        s.hf = f_h(a1);
+        modeling_flight_2D raschet1(nu, s);
+
+        DFP opt(ui->TB_vivod);
+        opt.isToPrint = false;
+        Vector Uisk1 = opt.calcDFP(raschet1,Uparam);
+        double t1 = raschet1.propUpr(Uisk1);
+        ui->TB_vivod->append(QString("Полет до а = %1:\t t1 = %2").arg(a1).arg(t1));
+        for (int a2 = a1+da1; a2 < ak-da2-da3; a2+=da2) {
+            Kep_param_vec newKE1 = raschet1.getCalcData().last().vKE;
+            newKE1.om = 0.0;
+            newKE1.u  = 0.0;
+            nu.v_ASK = KE_to_AGESK(newKE1);
+            nu.v_KE = AGESK_to_KE(nu.v_ASK);
+            s.hf = f_h(a2);
+            modeling_flight_2D raschet2(nu,s);
+            Vector Uisk2 = opt.calcDFP(raschet2,Uisk1);
+            double t2 = raschet2.propUpr(Uisk2);
+            ui->TB_vivod->append(QString("Полет до а = %1:\t t2 = %2").arg(a2).arg(t2));
+
+            for (int a3 = a2+da2; a3 < ak; a3+=da3) {
+                Kep_param_vec newKE2 = raschet2.getCalcData().last().vKE;
+                newKE2.om = 0.0;
+                newKE2.u  = 0.0;
+                nu.v_ASK = KE_to_AGESK(newKE2);
+                nu.v_KE = AGESK_to_KE(nu.v_ASK);
+                s.hf = f_h(a3);
+                modeling_flight_2D raschet3(nu,s);
+                Vector Uisk3 = opt.calcDFP(raschet3,Uisk2);
+                double t3 = raschet3.propUpr(Uisk3);
+                ui->TB_vivod->append(QString("Полет до а = %1:\t t3 = %2").arg(a3).arg(t3));
+
+                if (t2>2000.0) break;
+
+                Kep_param_vec newKE3 = raschet3.getCalcData().last().vKE;
+                newKE3.om = 0.0;
+                newKE3.u  = 0.0;
+                nu.v_ASK = KE_to_AGESK(newKE3);
+                nu.v_KE = AGESK_to_KE(nu.v_ASK);
+                s.hf = f_h(ak);
+                modeling_flight_2D raschet4(nu,s);
+                Vector Uisk4 = opt.calcDFP(raschet4,Uisk3);
+                double t4 = raschet4.propUpr(Uisk4);
+                ui->TB_vivod->append(QString("Полет до а = %1:\t t4 = %2").arg(ak).arg(t4));
+
+                a_p1.append(a1);
+                a_p2.append(a2);
+                a_p3.append(a3);
+                t_result.append(t1+t2+t3+t4);
+
+                ui->TB_vivod->append(QString("Result for ap1 = %1, ap2 = %2, ap3 = %3:\t t = %4\t t1 = %5\t t2 = %6\t t3 = %7\t t4 = %8")
+                                     .arg(a1).arg(a2).arg(a3).arg(t1+t2+t3+t4).arg(t1).arg(t2).arg(t3).arg(t4));
+            }
+        }
+    }
+    QStringList a_p1SL = vec2str(a_p1,'f',0);
+    QStringList a_p2SL = vec2str(a_p2,'f',0);
+    QStringList a_p3SL = vec2str(a_p3,'f',0);
+    QStringList t_rSL  = vec2str(t_result);
+    for (int i = 0; i < t_result.length(); ++i) {
+        if (t_result[i]>900.0 || t_result[i]<500.0) {
+            a_p1.removeAt(i);
+            a_p2.removeAt(i);
+            a_p3.removeAt(i);
+            t_result.removeAt(i);
+        }
+        ui->TB_vivod->append(QString("%1 | %2 | %3 | %4").arg(a_p1SL[i]).arg(a_p2SL[i]).arg(t_rSL[i]));
+    }
+
+    plot_draw_graph(ui->Plot,"ap","t, с",a_p1,t_result);
+}
+
+void MainWindow::plot_draw_graph(QCustomPlot *curPlot, QString xName, QString yName, Vector x, Vector y)
+{
+
+    curPlot->setLocale(QLocale(QLocale::Russian, QLocale::Russia));
+//    ui->Plot->graph(0)->setAntialiased(false);
+
+
+    int r = rand() % 255+1,
+        b = rand() % 255+1,
+        g = rand() % 255+1;
+
+//    ui->Plot->addGraph();
+
+//    QCPCurve a(ui->Plot->xAxis,ui->Plot->yAxis);
+//    a.setData(x,x,y);
+
+    curPlot->graph(0)->data().data()->clear(); // ????????
+    curPlot->graph(0)->setPen(QPen(QColor(r,g,b,255)));
+    curPlot->graph(0)->setData(x, y);
+    ui->Plot->yAxis->setLabel(yName);
+    ui->Plot->xAxis->setLabel(xName);
+    curPlot->rescaleAxes(true);
+    curPlot->replot();
+
+}
+
+void MainWindow::plot_draw_curves(QCustomPlot *curPlot, QString xName, QString yName, Vector x1, Vector x2, Vector y)
+{
+    curPlot->setLocale(QLocale(QLocale::Russian, QLocale::Russia));
+    for (QCPCurve* curve : curves) {
+//        ui->Plot->re
+    }
+
+
+//    ui->Plot->graph(0)->setAntialiased(false);
+
+
+    int r = rand() % 255+1,
+        b = rand() % 255+1,
+        g = rand() % 255+1;
+
+//    ui->Plot->addGraph();
+
+//    QCPCurve a(ui->Plot->xAxis,ui->Plot->yAxis);
+//    a.setData(x,x,y);
+
+    curPlot->graph(0)->data().data()->clear(); // ????????
+    curPlot->graph(0)->setPen(QPen(QColor(r,g,b,255)));
+    curPlot->graph(0)->setData(x1, y);
+    ui->Plot->yAxis->setLabel(yName);
+    ui->Plot->xAxis->setLabel(xName);
+    curPlot->rescaleAxes(true);
+    curPlot->replot();
+}
+
+
+
+
+

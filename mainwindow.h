@@ -7,6 +7,7 @@
 #include "RK4_integrator.h"
 #include "modeling_flight_rk4.h"
 #include "optima.h"
+#include "qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -47,7 +48,17 @@ private slots:
 
     void on_B_start_DFP_clicked();
 
+    void on_B_start_Task_2v_clicked();
+
+    void on_B_start_Task_3v_clicked();
+
+    void on_B_start_Task_4v_clicked();
+
 private:
+    void plot_draw_graph(QCustomPlot* curPlot,QString xName, QString yName, Vector x, Vector y);
+    void plot_draw_curves(QCustomPlot* curPlot,QString xName, QString yName, Vector x1, Vector x2, Vector y);
+    QVector<QCPCurve*> curves;
+
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H

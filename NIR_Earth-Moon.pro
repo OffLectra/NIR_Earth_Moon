@@ -1,4 +1,5 @@
 QT       += core gui
+QT       += printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,7 +26,8 @@ SOURCES += \
     math_model_3d.cpp \
     modeling_flight_rk4.cpp \
     optima.cpp \
-    perevod_.cpp
+    perevod_.cpp \
+    qcustomplot.cpp
 
 HEADERS += \
     RK4_integrator.h \
@@ -37,7 +39,8 @@ HEADERS += \
     math_model_3d.h \
     modeling_flight_rk4.h \
     optima.h \
-    perevod_.h
+    perevod_.h \
+    qcustomplot.h
 
 FORMS += \
     mainwindow.ui

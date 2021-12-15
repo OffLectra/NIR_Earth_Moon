@@ -6,6 +6,8 @@ ASK_param_vec KE_to_AGESK(Kep_param_vec v_KE) {
     vXYZ r0,n0;
 
     ASK_param_vec v_AGESK;
+
+    v_AGESK.m = v_KE.m;
 //__перевод в радианы из градусов___________________________________________
 //    v_KE.u   =   deg_to_rad(v_KE.u_d);
 //    v_KE.i   =   deg_to_rad(v_KE.i_d);
@@ -89,6 +91,7 @@ Kep_param_vec AGESK_to_KE(ASK_param_vec v_AGESK) {
     double c1,c2,c3,c,f1,f2,f3,lap;
     int ToO = 0;
 
+    v_KE.m = v_AGESK.m;
     //__Проверка______________________________________________________________
     v_KE.r = sqrt(v_AGESK.x*v_AGESK.x + v_AGESK.y*v_AGESK.y + v_AGESK.z*v_AGESK.z);
     v_KE.V = sqrt(v_AGESK.Vx*v_AGESK.Vx + v_AGESK.Vy*v_AGESK.Vy + v_AGESK.Vz*v_AGESK.Vz);

@@ -151,3 +151,12 @@ Matr trans(Matr M) {                             // транспонирован
     }
     return MT;
 }
+
+QStringList vec2str(Vector vec, char format, int prec)
+{
+    QStringList out;
+    for (double val : vec) {
+        out.append(QString::number(val,format,prec));
+    }
+    return out;
+}

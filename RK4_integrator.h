@@ -24,7 +24,8 @@ typedef struct {
 
 typedef struct {
     double dt;
-    double hf;
+    double af; // Большая полуось конечного эллипса
+    double hf; // Интеграл энергии конечный (целевой)
     double eps = 1E-6;
     bool is_export_data_to_file = true; //состояние "выводить ли данные в файл"
     QString file_name = "result.csv";   //имя файла

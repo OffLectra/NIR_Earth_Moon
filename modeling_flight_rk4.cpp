@@ -210,11 +210,11 @@ void modeling_flight_2D::propagate() {
         matr_K[0][d_y_dt ] = f_d_y_dt(vec_ASK_temp.Vy);
         matr_K[0][d_m_dt ] = f_d_m_dt(beta);
 
-        vec_ASK_temp.Vx = vec_ASK.Vx + dt*matr_K[0][d_Vx_dt]*0.5;
-        vec_ASK_temp.Vy = vec_ASK.Vy + dt*matr_K[0][d_Vy_dt]*0.5;
-        vec_ASK_temp.x  = vec_ASK.x  + dt*matr_K[0][d_x_dt]*0.5;
-        vec_ASK_temp.y  = vec_ASK.y  + dt*matr_K[0][d_y_dt]*0.5;
-        vec_ASK_temp.m  = vec_ASK.m  + dt*matr_K[0][d_m_dt]*0.5;
+        vec_ASK_temp.Vx = vec_ASK.Vx + dt * matr_K[0][d_Vx_dt]*0.5;
+        vec_ASK_temp.Vy = vec_ASK.Vy + dt * matr_K[0][d_Vy_dt]*0.5;
+        vec_ASK_temp.x  = vec_ASK.x  + dt * matr_K[0][d_x_dt]*0.5;
+        vec_ASK_temp.y  = vec_ASK.y  + dt * matr_K[0][d_y_dt]*0.5;
+        vec_ASK_temp.m  = vec_ASK.m  + dt * matr_K[0][d_m_dt]*0.5;
         vec_ASK_temp.Time = vec_ASK.Time + dt*0.5;
 
 // 2)------------------------
@@ -225,11 +225,11 @@ void modeling_flight_2D::propagate() {
         matr_K[1][d_y_dt ] = f_d_y_dt(vec_ASK_temp.Vy);
         matr_K[1][d_m_dt ] = f_d_m_dt(beta);
 
-        vec_ASK_temp.Vx = vec_ASK.Vx + dt*matr_K[1][d_Vx_dt]*0.5;
-        vec_ASK_temp.Vy = vec_ASK.Vy + dt*matr_K[1][d_Vy_dt]*0.5;
-        vec_ASK_temp.x  = vec_ASK.x  + dt* matr_K[1][d_x_dt]*0.5;
-        vec_ASK_temp.y  = vec_ASK.y  + dt* matr_K[1][d_y_dt]*0.5;
-        vec_ASK_temp.m  = vec_ASK.m  + dt* matr_K[1][d_m_dt]*0.5;
+        vec_ASK_temp.Vx = vec_ASK.Vx + dt * matr_K[1][d_Vx_dt]*0.5;
+        vec_ASK_temp.Vy = vec_ASK.Vy + dt * matr_K[1][d_Vy_dt]*0.5;
+        vec_ASK_temp.x  = vec_ASK.x  + dt * matr_K[1][d_x_dt]*0.5;
+        vec_ASK_temp.y  = vec_ASK.y  + dt * matr_K[1][d_y_dt]*0.5;
+        vec_ASK_temp.m  = vec_ASK.m  + dt * matr_K[1][d_m_dt]*0.5;
         vec_ASK_temp.Time = vec_ASK.Time + dt*0.5;
 
 // 3)------------------------
@@ -240,11 +240,11 @@ void modeling_flight_2D::propagate() {
         matr_K[2][d_y_dt ] = f_d_y_dt(vec_ASK_temp.Vy);
         matr_K[2][d_m_dt ] = f_d_m_dt(beta);
 
-        vec_ASK_temp.Vx = vec_ASK.Vx + dt*matr_K[2][d_Vx_dt];
-        vec_ASK_temp.Vy = vec_ASK.Vy + dt*matr_K[2][d_Vy_dt];
-        vec_ASK_temp.x  = vec_ASK.x  + dt* matr_K[2][d_x_dt];
-        vec_ASK_temp.y  = vec_ASK.y  + dt* matr_K[2][d_y_dt];
-        vec_ASK_temp.m  = vec_ASK.m  + dt* matr_K[2][d_m_dt];
+        vec_ASK_temp.Vx = vec_ASK.Vx + dt * matr_K[2][d_Vx_dt];
+        vec_ASK_temp.Vy = vec_ASK.Vy + dt * matr_K[2][d_Vy_dt];
+        vec_ASK_temp.x  = vec_ASK.x  + dt * matr_K[2][d_x_dt];
+        vec_ASK_temp.y  = vec_ASK.y  + dt * matr_K[2][d_y_dt];
+        vec_ASK_temp.m  = vec_ASK.m  + dt * matr_K[2][d_m_dt];
         vec_ASK_temp.Time = vec_ASK.Time + dt;
 
 // 4)------------------------

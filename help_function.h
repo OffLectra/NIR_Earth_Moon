@@ -28,6 +28,8 @@ enum upr_param {
     u_LAST
 };
 
+QStringList vec2str(Vector vec, char format = 'f', int prec = 3);
+
 double f_r(double x, double y, double z);
 double f_V(double Vx, double Vy, double Vz);
 bool angle_compare(double u1, double u2, double tol);
