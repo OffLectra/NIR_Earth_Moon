@@ -8,9 +8,9 @@ using namespace std;
 double integr_RK4(NU_RK4 nu, Settings_RK4 settings) {
     bool print_to_file = settings.is_export_data_to_file;
     double matr_K[4][d_LAST] = {0.0};
-    ASK_param_vec vec_ASK = nu.v_ASK, vec_ASK_temp = vec_ASK;    //1) явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
+    cASK vec_ASK = nu.v_ASK, vec_ASK_temp = vec_ASK;    //1) явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
                                                                  //2) явл врем перем для хран век сост на подшагах инт ((y, y1, y2, y3)_i, (y, y1, y2, y3)_i+1, ...);
-    Kep_param_vec vec_KE = nu.v_KE;
+    cKE vec_KE = nu.v_KE;
     ofstream Vivod_File(settings.file_name.toStdString(), ios_base::trunc);
     Vivod_File << fixed;
     Vivod_File.precision(16);
@@ -181,9 +181,9 @@ double integr_RK4(NU_RK4 nu, Settings_RK4 settings) {
 double integr_RK4_upr(NU_RK4 nu, Settings_RK4 settings, Vector upr) {
     bool print_to_file = settings.is_export_data_to_file;
     double matr_K[4][d_LAST] = {0.0};
-    ASK_param_vec vec_ASK = nu.v_ASK, vec_ASK_temp = vec_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
+    cASK vec_ASK = nu.v_ASK, vec_ASK_temp = vec_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
                                                                  //2) явл врем перем для хран век сост на подшагах инт ((y, y1, y2, y3)_i, (y, y1, y2, y3)_i+1, ...);
-    Kep_param_vec vec_KE = nu.v_KE;
+    cKE vec_KE = nu.v_KE;
     ofstream Vivod_File(settings.file_name.toStdString(), ios_base::trunc);
     Vivod_File << fixed;
     Vivod_File.precision(16);
@@ -355,9 +355,9 @@ double integr_RK4_upr(NU_RK4 nu, Settings_RK4 settings, Vector upr) {
 void integr_RK4_atm(NU_RK4 nu, Settings_RK4 settings) {
     bool print_to_file = settings.is_export_data_to_file;
     double matr_K[4][d_LAST] = {0.0};
-    ASK_param_vec vec_ASK = nu.v_ASK, vec_ASK_temp = vec_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
+    cASK vec_ASK = nu.v_ASK, vec_ASK_temp = vec_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
                                                                  //2) явл врем перем для хран век сост на подшагах инт ((y, y1, y2, y3)_i, (y, y1, y2, y3)_i+1, ...);
-    Kep_param_vec vec_KE = nu.v_KE;
+    cKE vec_KE = nu.v_KE;
     ofstream Vivod_File(settings.file_name.toStdString(), ios_base::trunc);
     Vivod_File << fixed;
     Vivod_File.precision(16);

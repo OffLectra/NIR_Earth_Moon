@@ -1,11 +1,11 @@
 #include "perevod_.h"
 
 
-ASK_param_vec KE_to_AGESK(Kep_param_vec v_KE) {
+cASK KE_to_AGESK(cKE v_KE) {
     int ToO = 0;
     vXYZ r0,n0;
 
-    ASK_param_vec v_AGESK;
+    cASK v_AGESK;
 
     v_AGESK.m = v_KE.m;
 //__перевод в радианы из градусов___________________________________________
@@ -85,8 +85,8 @@ ASK_param_vec KE_to_AGESK(Kep_param_vec v_KE) {
     return v_AGESK;
 }
 
-Kep_param_vec AGESK_to_KE(ASK_param_vec v_AGESK) {
-    Kep_param_vec v_KE;
+cKE AGESK_to_KE(cASK v_AGESK) {
+    cKE v_KE;
     double h;
     double c1,c2,c3,c,f1,f2,f3,lap;
     int ToO = 0;

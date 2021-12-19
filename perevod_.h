@@ -9,7 +9,23 @@
 #include <string.h>
 #include "help_function.h"
 
-typedef struct {
+struct cKE{
+    cKE(){}
+    cKE(double _a,
+        double _e,
+        double _om,
+        double _inc,
+        double _RAAN,
+        double _u):
+        a   (_a   ),
+        e   (_e   ),
+        i   (_inc ),
+        RAAN(_RAAN),
+        om  (_om  ),
+        u   (_u   ){
+        to_Deg();
+    }
+
     QString NameToC = "Kep"; //Type of coordinate name
     double a = 0,p = 0,r = 0,e = 0,i = 0,
     RAAN = 0,om = 0,f = 0,u = 0,i_d = 0,
@@ -55,10 +71,27 @@ typedef struct {
         this->om   = (this->om_d)  *toRad;
         this->RAAN = (this->RAAN_d)*toRad;
     }
-} Kep_param_vec;
+
+    cKE getKE_with_aem(){
+        cKE newKE;
+        newKE.a = this->a;
+        newKE.e = this->e;
+        newKE.m = this->m;
+        return newKE;
+    }
+
+    double rp (){
+        return a*(1-e)/(1+e);
+    }
+
+    double Vp (double mu){
+        return sqrt(mu/(rp()*(1+e)))*(1+e);
+    }
+
+} ;
 
 // декларация, далее объявляется тип
-typedef struct {
+struct cASK{
     QString NameToC = "ASK"; //Type of coordinate name
     double x = 0, y = 0, z = 0, Vx = 0, Vy = 0, Vz = 0, Time = 0, m = 0;
     QString name[7] = {"x","y","z","Vx","Vy","Vz","m"};
@@ -73,10 +106,10 @@ typedef struct {
         return f_V(Vx, Vy, Vz);
     }
 
-} ASK_param_vec; //название типа структуры
+} ; //название типа структуры
 
-Kep_param_vec AGESK_to_KE(ASK_param_vec v_AGESK); //функция перевода из агэск в кэ
-ASK_param_vec KE_to_AGESK(Kep_param_vec v_KE);  //функция перевода из ке в агэск
+cKE AGESK_to_KE(cASK v_AGESK); //функция перевода из агэск в кэ
+cASK KE_to_AGESK(cKE v_KE);  //функция перевода из ке в агэск
 
 double  check_f_rad     (double f);
 double  check_u_rad     (double u);

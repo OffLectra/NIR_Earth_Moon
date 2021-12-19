@@ -17,14 +17,14 @@ using namespace std;
 
 class StepData {
 public:
-    ASK_param_vec vASK;
-    Kep_param_vec vKE;
+    cASK vASK;
+    cKE vKE;
     QDateTime DT;
     double globalTime;
     double alpha, gamma, gt, TETA, beta; //2D
 
     StepData() {}
-    StepData(ASK_param_vec ask, Kep_param_vec ke) : vASK(ask), vKE(ke) {}
+    StepData(cASK ask, cKE ke) : vASK(ask), vKE(ke) {}
 
     QString Str_All_Header(QString del);
 
@@ -75,6 +75,12 @@ public:
 
     QVector<StepData> getCalcData() {
         return resultData;
+    }
+
+    Vector get_vU0(){return data.U();}
+
+    void upd(){
+
     }
 
 

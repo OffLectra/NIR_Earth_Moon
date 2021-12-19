@@ -22,13 +22,20 @@ const double g0 = 9.80665;
 typedef QVector<double> Vector;
 typedef QVector<Vector> Matr;
 
+typedef QList<QStringList> QStringLL;
+
+
 enum upr_param {
     u_gamma = 0,
     u_dgdt,
     u_LAST
 };
 
-QStringList vec2str(Vector vec, char format = 'f', int prec = 3);
+QStringList vec2strL(Vector vec, char format = 'f', int prec = 3);
+
+QString strL2str(QStringList data,QString sep = " | ");
+
+
 
 double f_r(double x, double y, double z);
 double f_V(double Vx, double Vy, double Vz);

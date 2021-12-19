@@ -33,6 +33,7 @@ NU_RK4 MainWindow::prepareNUASK() {
     nu.v_ASK.m = ui->lineEdit_m->text().toDouble();
     nu.P = ui->lineEdit_P->text().toDouble();
     nu.P_ud = ui->lineEdit_P_ud->text().toDouble();
+    nu.Wist = fabs(nu.P_ud*g0);
     nu.beta = fabs(nu.P/(nu.P_ud*g0));
     nu.gamma_0 = ui->lineEdit_gamma->text().toDouble()*M_PI/180;
     nu.d_gamma_dt = ui->lineEdit_dgamma_dt->text().toDouble()*M_PI/180;
@@ -52,7 +53,7 @@ Settings_RK4 MainWindow::prepareSettings() {
 }
 
 void MainWindow::on_pushButton_KE_to_AGESK_clicked() {
-    Kep_param_vec v_KE;
+    cKE v_KE;
 
     v_KE.a = ui->lineEdit_KE_a->text().toDouble()  ;
     v_KE.e = ui->lineEdit_KE_e->text().toDouble();
@@ -61,7 +62,7 @@ void MainWindow::on_pushButton_KE_to_AGESK_clicked() {
     v_KE.om = ui->lineEdit_KE_omega->text().toDouble()  *toRad;
     v_KE.u = ui->lineEdit_KE_u->text().toDouble()   *toRad;
 
-    ASK_param_vec v_AGESK;
+    cASK v_AGESK;
     v_AGESK = KE_to_AGESK(v_KE);
 
     ui->lineEdit_ASK_x0->setText(QString::number(v_AGESK.x));
@@ -73,7 +74,7 @@ void MainWindow::on_pushButton_KE_to_AGESK_clicked() {
 }
 
 void MainWindow::on_pushButton_AGESK_to_KE_clicked() {
-    ASK_param_vec v_AGESK;
+    cASK v_AGESK;
 
     v_AGESK.x = ui->lineEdit_ASK_x0->  text().toDouble();
     v_AGESK.y = ui->lineEdit_ASK_y0->  text().toDouble();
@@ -82,7 +83,7 @@ void MainWindow::on_pushButton_AGESK_to_KE_clicked() {
     v_AGESK.Vy = ui->lineEdit_ASK_Vy0->text().toDouble();
     v_AGESK.Vz = ui->lineEdit_ASK_Vz0->text().toDouble();
 
-    Kep_param_vec v_KE;
+    cKE v_KE;
     v_KE = AGESK_to_KE(v_AGESK);
 
     ui->lineEdit_KE_a->setText(QString::number(  v_KE.a));
@@ -681,21 +682,33 @@ void MainWindow::on_B_start_DFP_clicked() {
     Vector Uparam {nu.gamma_0, nu.d_gamma_dt};
 
     DFP opt(ui->TB_vivod);
+    f_x f = [raschet](Vector U){
+        modeling_flight_2D fl = modeling_flight_2D(raschet);
+        return fl.propUpr(U);
+    };
+//    Vector Uisk = opt.calcDFP(f,Uparam);
     Vector Uisk = opt.calcDFP(raschet,Uparam);
 
-    raschet.propUpr(Uisk);
+    double t_res = raschet.propUpr(Uisk);
     raschet.printCalcDataToFile(settings.file_name);
 
-    QMessageBox::information(this, "Сообщение", "Расчет градиентного спуска окончен");
+
+
+    QMessageBox::information(this, "Сообщение", QString("Расчет градиентного спуска окончен, t = %1").arg(t_res));
 }
 
+//11772 13372 14172 17472
 void MainWindow::on_B_start_Task_2v_clicked()
 {
     NU_RK4 nu0 = prepareNUASK();
     Settings_RK4 settings0 = prepareSettings();
     Vector a_p,t_result;
+    int i = 1;
     double ak = settings0.af; // Запоминаем величину большой полуоси конечного эллипса
-    for (int a = nu0.v_KE.a+1; a < ak; a+=100) {
+    for (int a = 14072/*nu0.v_KE.a+1*/; a < ak; a+=100) {
+        if (a>14072) {
+            i++;
+        }
         NU_RK4 nu = nu0;      //Каждый новый рассчёт сброс параметров
         Settings_RK4 s = settings0;
         Vector Uparam {nu.gamma_0, nu.d_gamma_dt};
@@ -707,12 +720,10 @@ void MainWindow::on_B_start_Task_2v_clicked()
         opt.isToPrint = false;
         Vector Uisk1 = opt.calcDFP(raschet1,Uparam);
         double t1 = raschet1.propUpr(Uisk1);
-        Kep_param_vec newKE = raschet1.getCalcData().last().vKE;
+        nu.upd_with_KE(raschet1.getCalcData().last().vKE.getKE_with_aem());
 
-        newKE.om = 0.0;
-        newKE.u  = 0.0;
-        nu.v_ASK = KE_to_AGESK(newKE);
-        nu.v_KE = AGESK_to_KE(nu.v_ASK);
+//        nu.v_ASK = KE_to_AGESK(newKE);
+//        nu.v_KE = AGESK_to_KE(nu.v_ASK);
         s.hf = f_h(ak);
         modeling_flight_2D raschet2(nu,s);
         Vector Uisk2 = opt.calcDFP(raschet2,Uisk1);
@@ -724,8 +735,8 @@ void MainWindow::on_B_start_Task_2v_clicked()
         ui->TB_vivod->append(QString("Result for ap = %1:\n\t t = %2").
                              arg(a).arg(t1+t2));
     }
-    QStringList a_pSL = vec2str(a_p,'f',0);
-    QStringList t_rSL = vec2str(t_result);
+    QStringList a_pSL = vec2strL(a_p,'f',0);
+    QStringList t_rSL = vec2strL(t_result);
     for (int i = 0; i < t_result.length(); ++i) {
         if (t_result[i]>1000.0) {
             a_p.removeAt(i);
@@ -761,7 +772,7 @@ void MainWindow::on_B_start_Task_3v_clicked()
         double t1 = raschet1.propUpr(Uisk1);
         ui->TB_vivod->append(QString("Полет до а = %1:\t t1 = %2").arg(a1).arg(t1));
         for (int a2 = a1+da1; a2 < ak; a2+=da2) {
-            Kep_param_vec newKE1 = raschet1.getCalcData().last().vKE;
+            cKE newKE1 = raschet1.getCalcData().last().vKE;
             newKE1.om = 0.0;
             newKE1.u  = 0.0;
             nu.v_ASK = KE_to_AGESK(newKE1);
@@ -774,7 +785,7 @@ void MainWindow::on_B_start_Task_3v_clicked()
 
             if (t2>2000.0) break;
 
-            Kep_param_vec newKE2 = raschet2.getCalcData().last().vKE;
+            cKE newKE2 = raschet2.getCalcData().last().vKE;
             newKE2.om = 0.0;
             newKE2.u  = 0.0;
             nu.v_ASK = KE_to_AGESK(newKE2);
@@ -793,9 +804,9 @@ void MainWindow::on_B_start_Task_3v_clicked()
                                  .arg(a1).arg(a2).arg(t1+t2+t3).arg(t1).arg(t2).arg(t3));
         }
     }
-    QStringList a_p1SL = vec2str(a_p1,'f',0);
-    QStringList a_p2SL = vec2str(a_p2,'f',0);
-    QStringList t_rSL = vec2str(t_result);
+    QStringList a_p1SL = vec2strL(a_p1,'f',0);
+    QStringList a_p2SL = vec2strL(a_p2,'f',0);
+    QStringList t_rSL = vec2strL(t_result);
     for (int i = 0; i < t_result.length(); ++i) {
         if (t_result[i]>900.0 || t_result[i]<500.0) {
             a_p1.removeAt(i);
@@ -825,13 +836,13 @@ void MainWindow::on_B_start_Task_4v_clicked()
         s.hf = f_h(a1);
         modeling_flight_2D raschet1(nu, s);
 
-        DFP opt(ui->TB_vivod);
+        DFP opt;
         opt.isToPrint = false;
         Vector Uisk1 = opt.calcDFP(raschet1,Uparam);
         double t1 = raschet1.propUpr(Uisk1);
         ui->TB_vivod->append(QString("Полет до а = %1:\t t1 = %2").arg(a1).arg(t1));
         for (int a2 = a1+da1; a2 < ak-da2-da3; a2+=da2) {
-            Kep_param_vec newKE1 = raschet1.getCalcData().last().vKE;
+            cKE newKE1 = raschet1.getCalcData().last().vKE;
             newKE1.om = 0.0;
             newKE1.u  = 0.0;
             nu.v_ASK = KE_to_AGESK(newKE1);
@@ -843,7 +854,7 @@ void MainWindow::on_B_start_Task_4v_clicked()
             ui->TB_vivod->append(QString("Полет до а = %1:\t t2 = %2").arg(a2).arg(t2));
 
             for (int a3 = a2+da2; a3 < ak; a3+=da3) {
-                Kep_param_vec newKE2 = raschet2.getCalcData().last().vKE;
+                cKE newKE2 = raschet2.getCalcData().last().vKE;
                 newKE2.om = 0.0;
                 newKE2.u  = 0.0;
                 nu.v_ASK = KE_to_AGESK(newKE2);
@@ -856,7 +867,7 @@ void MainWindow::on_B_start_Task_4v_clicked()
 
                 if (t2>2000.0) break;
 
-                Kep_param_vec newKE3 = raschet3.getCalcData().last().vKE;
+                cKE newKE3 = raschet3.getCalcData().last().vKE;
                 newKE3.om = 0.0;
                 newKE3.u  = 0.0;
                 nu.v_ASK = KE_to_AGESK(newKE3);
@@ -877,10 +888,10 @@ void MainWindow::on_B_start_Task_4v_clicked()
             }
         }
     }
-    QStringList a_p1SL = vec2str(a_p1,'f',0);
-    QStringList a_p2SL = vec2str(a_p2,'f',0);
-    QStringList a_p3SL = vec2str(a_p3,'f',0);
-    QStringList t_rSL  = vec2str(t_result);
+    QStringList a_p1SL = vec2strL(a_p1,'f',0);
+    QStringList a_p2SL = vec2strL(a_p2,'f',0);
+    QStringList a_p3SL = vec2strL(a_p3,'f',0);
+    QStringList t_rSL  = vec2strL(t_result);
     for (int i = 0; i < t_result.length(); ++i) {
         if (t_result[i]>900.0 || t_result[i]<500.0) {
             a_p1.removeAt(i);
@@ -952,4 +963,88 @@ void MainWindow::plot_draw_curves(QCustomPlot *curPlot, QString xName, QString y
 
 
 
+
+
+void MainWindow::on_B_start_Task_2vmin_clicked()
+{
+    NU_RK4 nu = prepareNUASK();
+    Settings_RK4 settings = prepareSettings();
+
+    modeling_flight_2D raschet(nu, settings);
+    Vector Uparam {nu.gamma_0, nu.d_gamma_dt};
+
+
+    OptimaFlight2D task(nu,settings,{},{},{},ui->TB_vivod);
+
+    gradDescent opt({1e-2},1e-6,{10},ui->TB_vivod);
+
+    f_x f = [&task,nu,settings](Vector U){
+        return task.task2v(nu,settings,{U[0],settings.af});
+    };
+
+    Vector Uisk = opt.gradD(f,{12000});
+
+    double t_res = task.task2v(nu,settings,{Uisk[0],settings.af});
+
+
+    QMessageBox::information(this, "Сообщение", QString("Расчет градиентного спуска окончен, t_res = %1").arg(t_res));
+}
+
+
+void MainWindow::on_B_start_Task_Imp_clicked()
+{
+    NU_RK4 nu = prepareNUASK();
+    Settings_RK4 s = prepareSettings();
+
+    gradDescent opt({1e-2},1e-6,{10},ui->TB_vivod);
+
+    QTextBrowser *TB = ui->TB_vivod;
+
+    f_x f = [nu,s,TB](Vector U){
+        ImpTask task(nu.v_KE,
+                     cKE(s.af,0.0,0.0,0.0,0.0,0.0),
+                     nu.beta,
+                     nu.Wist,
+                     nu.v_ASK.m,
+                     mu,
+                     TB);
+        return task.findFulldVxap2V(U.first());
+    };
+
+    QStringList h1 = {"ap","dV1","mk1","dt1","dV2","mk2","dt2","dV","dt"};
+    QStringList h2 = {"ap1","ap2","dV1","mk1","dt1","dV2","mk2","dt2","dV3","mk3","dt3","dV","dt"};
+    QString     sep = ";",
+                out = strL2str(h1,sep)+"\n";
+
+    for (double a = nu.v_KE.a+10; a < s.af; a+=50) {
+        ImpTask task(nu.v_KE,
+                     cKE(s.af,0.0,0.0,0.0,0.0,0.0),
+                     nu.beta,
+                     nu.Wist,
+                     nu.v_ASK.m,
+                     mu,
+                     TB);
+        out += strL2str(vec2strL(task.findFullVals({a})),sep) + "\n";
+    }
+    out += "\n\n\n"+strL2str(h2,sep)+"\n";
+    for (double a1 = nu.v_KE.a+10; a1 < s.af; a1+=500) {
+        for (double a2 = a1+10; a2 < s.af; a2+=1000) {
+            ImpTask task(nu.v_KE,
+                         cKE(s.af,0.0,0.0,0.0,0.0,0.0),
+                         nu.beta,
+                         nu.Wist,
+                         nu.v_ASK.m,
+                         mu,
+                         TB);
+            out += strL2str(vec2strL(task.findFullVals({a1,a2})),sep) + "\n";
+        }
+    }
+
+    TB->append(out);
+//    Vector Uisk = opt.gradD(f,{12000});
+//    double dV = task.findFulldVxap2V(Uisk.first());
+    QMessageBox::information(this, "Сообщение",
+                             QString("Расчет градиентного спуска окончен, dV = %1"));
+
+}
 

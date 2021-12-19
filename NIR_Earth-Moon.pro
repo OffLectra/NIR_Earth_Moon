@@ -21,6 +21,7 @@ SOURCES += \
     atm_gost_.cpp \
     functions.cpp \
     help_function.cpp \
+    imp_task.cpp \
     main.cpp \
     mainwindow.cpp \
     math_model_3d.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     atm_gost_.h \
     functions.h \
     help_function.h \
+    imp_task.h \
     koef.h \
     mainwindow.h \
     math_model_3d.h \

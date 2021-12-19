@@ -1196,6 +1196,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="B_start_Task_2vmin">
+         <property name="text">
+          <string>2 Вкл ДФП min</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="B_start_Task_3v">
          <property name="text">
           <string>3 Вкл ДФП</string>
@@ -1206,6 +1213,13 @@
         <widget class="QPushButton" name="B_start_Task_4v">
          <property name="text">
           <string>4 Вкл ДФП</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="B_start_Task_Imp">
+         <property name="text">
+          <string>Импульсный случай</string>
          </property>
         </widget>
        </item>

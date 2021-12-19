@@ -24,9 +24,9 @@ void modeling_flight_3D::printCalcDataToFile(QString filename) {
 
 void modeling_flight_3D::propagate() {
     double m_K[4][d_LAST] = {0.0};
-    ASK_param_vec v_ASK = data.v_ASK, v_ASK_t = v_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
+    cASK v_ASK = data.v_ASK, v_ASK_t = v_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
     double dt = config.dt;                                                    //2) явл врем перем для хран век сост на подшагах инт ((y, y1, y2, y3)_i, (y, y1, y2, y3)_i+1, ...);
-    Kep_param_vec v_KE = data.v_KE;
+    cKE v_KE = data.v_KE;
     double beta = 0.0;
 
     calcData.append(StepData(v_ASK, v_KE));
@@ -179,9 +179,9 @@ void modeling_flight_2D::printCalcDataToFile(QString filename) {
 void modeling_flight_2D::propagate() {
 
     double matr_K[4][d_LAST] = {0.0};
-    ASK_param_vec vec_ASK = data.v_ASK, vec_ASK_temp = vec_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
+    cASK vec_ASK = data.v_ASK, vec_ASK_temp = vec_ASK;  //1)- явл.пер для хран век. сост. в момент оконч расч шага(y_i, y_i+1, ...);
     //2) явл врем перем для хран век сост на подшагах инт ((y, y1, y2, y3)_i, (y, y1, y2, y3)_i+1, ...);
-    Kep_param_vec vec_KE = data.v_KE;
+    cKE vec_KE = data.v_KE;
     double dt = config.dt;
     double beta = data.beta;
 

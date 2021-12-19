@@ -7,6 +7,7 @@
 #include "RK4_integrator.h"
 #include "modeling_flight_rk4.h"
 #include "optima.h"
+#include "imp_task.h"
 #include "qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
@@ -53,6 +54,10 @@ private slots:
     void on_B_start_Task_3v_clicked();
 
     void on_B_start_Task_4v_clicked();
+
+    void on_B_start_Task_2vmin_clicked();
+
+    void on_B_start_Task_Imp_clicked();
 
 private:
     void plot_draw_graph(QCustomPlot* curPlot,QString xName, QString yName, Vector x, Vector y);
