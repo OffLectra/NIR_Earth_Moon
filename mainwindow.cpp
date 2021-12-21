@@ -705,10 +705,10 @@ void MainWindow::on_B_start_Task_2v_clicked()
     Vector a_p,t_result;
     int i = 1;
     double ak = settings0.af; // Запоминаем величину большой полуоси конечного эллипса
-    for (int a = 14072/*nu0.v_KE.a+1*/; a < ak; a+=100) {
-        if (a>14072) {
-            i++;
-        }
+    for (int a = nu0.v_KE.a+1; a < ak; a+=1000) {
+//        if (a>14072) {
+//            i++;
+//        }
         NU_RK4 nu = nu0;      //Каждый новый рассчёт сброс параметров
         Settings_RK4 s = settings0;
         Vector Uparam {nu.gamma_0, nu.d_gamma_dt};
@@ -732,8 +732,8 @@ void MainWindow::on_B_start_Task_2v_clicked()
         a_p.append(a);
         t_result.append(t1+t2);
 
-        ui->TB_vivod->append(QString("Result for ap = %1:\n\t t = %2").
-                             arg(a).arg(t1+t2));
+//        ui->TB_vivod->append(QString("Result for ap = %1:\n\t t = %2").
+//                             arg(a).arg(t1+t2));
     }
     QStringList a_pSL = vec2strL(a_p,'f',0);
     QStringList t_rSL = vec2strL(t_result);
@@ -742,7 +742,7 @@ void MainWindow::on_B_start_Task_2v_clicked()
             a_p.removeAt(i);
             t_result.removeAt(i);
         }
-        ui->TB_vivod->append(QString("%1 | %2").arg(a_pSL[i]).arg(t_rSL[i]));
+        ui->TB_vivod->append(QString("%1;%2").arg(a_pSL[i]).arg(t_rSL[i]));
     }
 
 
